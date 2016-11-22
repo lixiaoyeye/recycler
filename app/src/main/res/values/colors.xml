@@ -4,4 +4,138 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="base_black">#3e3e3e</color>
+
+    <color name="list_divider">#bdbdbd</color>
+    <color name="entry_blue">#72c0f2</color>
+    <color name="custom_black">#505050</color>
+    <color name="text_gray">#969696</color>
+    <color name="custom_diver">#ededed</color>
+    <color name="silver">#c0c0c0</color>
+    <color name="defect_tab_blue">#3399ff</color>
+    <color name="color_bottom_text_normal">#9da0a4</color>
+    <color name="color_bottom_text_press">#4f9ef6</color>
+    <color name="theme_bg_color">#f0f2f5</color>
+    <color name="base_color_text_gray">#9fa0a0</color>
+    <color name="contact_base_actionbar_bg">#f5f5f5</color>
+    <color name="contact_base_bg">#f4f6f6</color>
+    <color name="color_black">#000</color>
+    <color name="base_actionbar_bg">#f5f5f5</color>
+    <color name="guide_color">#898989</color>
+    <color name="popup_bg">#f2f2f2</color>
+    <color name="light_black">#a8a8a8</color>
+    <color name="dark_white">#dddddd</color>
+    <color name="black">#000000</color>
+    <color name="panel">#efeef3</color>
+    <!---->
+    <color name="blue">#72c0f2</color>
+    <color name="tranparent">#0000</color>
+    <color name="white">#fff</color>
+    <color name="tree_green">#5CB98D</color>
+    <color name="dark_tree_green">#428666</color>
+    <color name="common_blue">#2C97E8</color>
+    <color name="common_oring">#e8af19</color>
+    <color name="transparent">#ffff</color>
+    <color name="base_color_text_black">#3e3e39</color>
+    <color name="msg_emote_divider">#ffa1a1a1</color>
+    <color name="base_color_text_white">#fff</color>
+    <color name="base_bg">#f4f6f6</color>
+    <!-- emot -->
+    <color name="msg_chat_bg">#eceff4</color>
+    <color name="dialog_color_title">#f82c22</color>
+    <color name="chatLeftText">#000</color>
+    <color name="red">#f00</color>
+    <color name="btn_green">#2eb855</color>
+    <color name="gray">#8b7355</color>
+    <color name="comm_bg">#ececec</color>
+
+    <!-- listview 通用颜色 -->
+    <color name="home_top_bg_col">#F2F2F2</color>
+    <color name="lv_pressed_col">#6c708090</color>
+    <color name="lv_focused_col">#ffe3f3ff</color>
+    <color name="lv_divier_col">#e1e1e1</color>
+
+    <color name="dynamic_name_text">#5e6293</color>
+    <color name="dynamic_time_text">#6e6e6e</color>
+    <color name="dynamic_comment_text">#444</color>
+    <color name="dynamic_content">#373a3d</color>
+
+    <color name="radio_uncheck">#F9F9F9</color>
+    <color name="radio_check">#e3f3ff</color>
+    <color name="radio_press">#333333</color>
+    <color name="radio_text_uncheck">#6B6B6B</color>
+    <color name="circle_stroke">#EFEFF4</color>
+    <color name="single_px_horzonal_color">#efeef3</color>
+
+    <!--  朋友圈相关颜色  -->
+    <color name="login_text">#0e39a1</color>
+    <color name="register_text">#444</color>
+    <color name="head_view_bg">#3399fe</color>
+    <color name="head_view_bg_old">#2C97E8</color>
+    <color name="list_view_divider">#ddd</color>
+    <color name="enletter_text">#2a7af7</color>
+
+    <color name="textcolor">#403838</color>
+    <color name="text_black">#333333</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_view">#b0000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="dynamic_comment_bg">#F9F9F9</color>
+    <color name="dynamic_bg">#F7F7F7</color>
+    <color name="panel_bg">#E8E8E8</color>
+
+    <color name="evententry_isdoing">#546fb4</color>
+    <color name="evententry_myevent">#00a0ea</color>
+    <color name="evententry_allevent">#a468c2</color>
+    <color name="evententry_myfocus">#f39801</color>
+    <color name="evententry_myfocus1">#FF8C00</color>
+    <color name="evententry_atmyevent">#0e9e59</color>
+    <color name="evententry_createevent">#0e9e59</color>
+
+    <color name="eventhome_filter_title_bg">#f1f1f1</color>
+    <color name="eventhome_filter_label_bg">#f3f4f6</color>
+    <color name="event_bg">#f0eff5</color>
+    <color name="event_item_top_bg">#c9c9cb</color>
+    <color name="event_item_bottom_bg">#e7e6ea</color>
+    <color name="event_line_bg">#f0f0f0</color>
+    <color name="line_bg">#c9c9cb</color>
+
+    <color name="event_detail_bg">#F0EFF5</color>
+    <color name="event_progress_yello">#f7a45a</color>
+    <color name="event_progress_1">#9b621f</color>
+
+    <color name="event_detail_dot_green">#2b991e</color>
+    <color name="event_detail_dot_red">#e70010</color>
+    <color name="event_detail_dot_blue">#3399ff</color>
+    <color name="event_detail_dot_deepblue">#386eff</color>
+
+    <color name="event_create_draw_button_bg">#aaa</color>
+    <color name="event_create_draw_button_bg_checked">#3399ff</color>
+    <color name="event_create_draw_button_text">#282828</color>
+
+    <color name="event_create_draw_label">#787878</color>
+    <color name="event_home_parent_bg">#fe6603</color>
+    <color name="event_home_degree_bg">#ff6600</color>
+
+    <color name="cityselect_bg_1">#f5f5f5</color>
+    <color name="cityselect_bg_2">#ffffff</color>
+    <color name="cityselect_bg_3">#f0f0f0</color>
+
+
+    <color name="eventmultisearch_tool_bg">#8b8b8b</color>
+    <color name="datechoose_bg">#e3edf6</color>
+    <color name="datechoose_line">#cdcdcd</color>
+    <color name="datechoose_interval">#ececec</color>
+
+    <color name="stat_board_loading_bg">#ccffffff</color>
+
+    <color name="year_off">#EAC047</color>
+    <color name="wedding_off">#E67BDB</color>
+    <color name="preg_off">#99cc01</color>
+    <color name="exchanger_off">#ea7446</color>
+    <color name="comp_off">#02cc5c</color>
+    <color name="raise_off">#d65c8d</color>
+    <color name="death_off">#c9c9c9</color>
+    <color name="staff_off">#ba93ee</color>
+    <color name="sick_off">#01bfcb</color>
+
 </resources>

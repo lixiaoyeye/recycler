@@ -10,4 +10,9 @@
     <string name="rubbish_incar">垃圾装车</string>
     <string name="data_sync">同步数据</string>
     <string name="data_query">查询</string>
+
+    <string name="dialog_msg_laoding">正在加载数据</string>
+    <string name="netnotavaliable">无法连接到网络</string>
+    <string name="password_can_not_null">密码不能为空</string>
+    <string name="username_cannot_null">用户名不能为空</string>
 </resources>

@@ -1,30 +1,47 @@
 package health.rubbish.recycler.activity.login;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import org.json.JSONObject;
+import java.io.IOException;
 
+import health.rubbish.recycler.base.App;
+import health.rubbish.recycler.entity.LoginUser;
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.activity.MainActivity;
 import health.rubbish.recycler.base.BaseActivity;
-import health.rubbish.recycler.network.request.RequestUtil;
-import health.rubbish.recycler.network.request.ResponseParser;
-import health.rubbish.recycler.util.ToastUtil;
-import health.rubbish.recycler.widget.CustomProgressDialog;
-
+import health.rubbish.recycler.util.LoginUtil;
+import health.rubbish.recycler.util.NetUtil;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
- * Created by xiayanlei on 2016/11/13.
+ * Created by Lenovo on 2016/11/20.
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText userNamaText;
+public class LoginActivity extends BaseActivity {
+    private EditText userNameView;
+    private EditText passwordView;
+    private ImageView setIpView;
+    private Button loginView;
 
-    private EditText passwordText;
+    private static final String ADDRESS = "address";
+    private String ipStr = "168.168.10.43";
+    private String portStr = "9023";
 
-    private CustomProgressDialog progressDialog;
+    private String userid;
+    private String password;
 
     @Override
     protected int getLayoutId() {
@@ -32,64 +49,144 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     @Override
-    protected void initViewAndEvents() {
-        userNamaText = (EditText) findViewById(R.id.username_edittext);
-        passwordText = (EditText) findViewById(R.id.password_edittext);
-        Button loginBtn = (Button) findViewById(R.id.login_btn);
-        loginBtn.setOnClickListener(this);
+    protected void init() {
+        saveDefaultAddress();
+        initView();
+        setDefaultData();
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login_btn:
-                onLoginClick();
-                break;
-        }
+    protected void onResume() {
+        super.onResume();
     }
 
-    /**
-     * 校验用户名和密码是否非空
-     *
-     * @param username
-     * @param password
-     */
-    private boolean isUserValid(String username, String password) {
-        if (TextUtils.isEmpty(username)) {
-            ToastUtil.shortToast(this, R.string.username_input_hint);
-            return false;
-        }
-        if (TextUtils.isEmpty(password)) {
-            ToastUtil.shortToast(this, R.string.password_input_hint);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 登录到主界面
-     */
-    private void onLoginClick() {
-        String username = userNamaText.getText().toString();
-        String password = passwordText.getText().toString();
-        if (!isUserValid(username, password))
-            return;
-        if (progressDialog == null)
-            progressDialog = new CustomProgressDialog(this);
-        progressDialog.setMessage(R.string.start_logining).show();
-        RequestUtil.getInstance().startLogin(username, password, new ResponseParser() {
+    private void initView()
+    {
+        userNameView  = (EditText)findViewById(R.id.username_edittext);
+        passwordView = (EditText)findViewById(R.id.password_edittext);
+        setIpView = (ImageView) findViewById(R.id.setip_img);
+        setIpView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onParserComplete(Exception e, Object o) {
-                loginSuccess();
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, SetIpActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        loginView = (Button) findViewById(R.id.login_btn);
+        loginView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
             }
         });
     }
 
-    /**
-     * 登录成功，跳转到主界面
-     */
-    private void loginSuccess() {
-        progressDialog.dismiss();
-        startActivity(new Intent(this, MainActivity.class));
+    private void login() {
+        userid = userNameView.getText().toString().trim();
+       password = passwordView.getText().toString().trim();
+
+        if (TextUtils.isEmpty(userid)) {
+            toast(R.string.username_cannot_null);
+            return;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            toast(R.string.password_can_not_null);
+            return;
+        }
+
+        //判断是否有网络连接，如果有，网络验证连接，没有则离线登录。
+        if (NetUtil.isNetAvailable()) {
+            hideDialog();
+            netIdentify();
+        } else {
+            new AlertDialog.Builder(LoginActivity.this).setTitle("医废管理系统").setMessage("暂时无法连接到网络，请检查网络").setPositiveButton("确定", null).show();
+        }
+    }
+
+    private void netIdentify() {
+        //创建okHttpClient对象
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("userid", userid)
+                .add("password", password)
+                .build();
+        Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                hideDialog();
+                new AlertDialog.Builder(LoginActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                hideDialog();
+                parseLoginResponse(response.body().string());
+            }
+        });
+    }
+
+
+    private void saveDefaultAddress() {
+        SharedPreferences sharedPreferences = getSharedPreferences(ADDRESS, Activity.MODE_PRIVATE);
+        String tempIp = sharedPreferences.getString("ip", null);
+        if (tempIp == null) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("ip", ipStr);
+            editor.putString("port", portStr);
+            editor.commit();
+        } else {
+            return;
+        }
+    }
+
+    //获取保存在本地的用户名和密码
+    private void setDefaultData() {
+        LoginUser loginUser = App.getCurrentUser();
+        if (loginUser != null) {
+            userNameView.setText(loginUser.userid);
+            passwordView.setText(loginUser.password);
+        }
+    }
+
+    private void parseLoginResponse(String result)
+    {
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            String success = jsonObject.getString("result");
+            if (success.equals("success"))
+            {
+                LoginUser loginUser = new LoginUser();
+                loginUser.userid = userid;
+                loginUser.password = password;
+                loginUser.username = jsonObject.getString("username");
+                loginUser.positioncode = jsonObject.getString("positioncode");
+                loginUser.position = jsonObject.getString("position");
+                loginUser.authority = jsonObject.getString("authority");
+
+                App.ctx.setCurrentUser(loginUser);
+                LoginUtil.saveLoginUser(loginUser);
+                jump();
+            }
+            else
+            {
+                toast("获取数据错误，无法登陆");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void jump()
+    {
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 }
+
+

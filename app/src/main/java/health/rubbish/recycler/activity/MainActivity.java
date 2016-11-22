@@ -22,7 +22,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     @Override
-    protected void initViewAndEvents() {
+    protected void init() {
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         GridView gridView = (GridView) findViewById(R.id.module_gridview);
         adapter = new MainModuleAdapter();
