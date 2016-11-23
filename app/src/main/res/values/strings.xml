@@ -15,4 +15,11 @@
     <string name="netnotavaliable">无法连接到网络</string>
     <string name="password_can_not_null">密码不能为空</string>
     <string name="username_cannot_null">用户名不能为空</string>
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_last_time">上次更新时间</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_footer_hint_normal">加载更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="client_error">无法连接到服务器</string>
 </resources>
