@@ -44,6 +44,7 @@
                     android:layout_width="60dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="@dimen/medium_margin_8dp"
+                    android:enabled="false"
                     android:background="@drawable/button_rfid_normal"
                     android:scaleType="fitXY" />
             </LinearLayout>

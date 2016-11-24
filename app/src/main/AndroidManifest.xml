@@ -35,7 +35,8 @@
         <!-- 垃圾收集 !-->
         <activity
             android:name=".activity.collection.WasteListActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".activity.collection.WasteAddActivity"
             android:screenOrientation="portrait"/>

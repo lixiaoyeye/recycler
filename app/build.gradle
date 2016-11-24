@@ -1,16 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 21
+    buildToolsVersion "23.0.1"
+
     defaultConfig {
         applicationId "health.rubbish.recycler"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    sourceSets{
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,10 +28,12 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
+    //compile 'com.android.support:appcompat-v7:24.0.0-alpha1'
+    //compile 'com.android.support:design:24.0.0-alpha1'
+    compile 'com.android.support:support-v4:21.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
+    compile 'com.alibaba:fastjson:1.1.55.android'
+    compile files('libs/mt5000_V1.0.4_nolog.jar')
+    compile files('libs/ModuleAPI_Android_2.2.2.0.jar')
 }

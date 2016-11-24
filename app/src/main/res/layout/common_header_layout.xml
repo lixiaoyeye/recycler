@@ -2,4 +2,5 @@
 <health.rubbish.recycler.widget.HeaderLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/header_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/header_layout_48dp" />
+    android:layout_height="@dimen/header_layout_48dp"
+    android:orientation="vertical"/>
