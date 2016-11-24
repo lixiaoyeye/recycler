@@ -24,6 +24,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     @Override
     protected void init() {
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
+        headerLayout.showTitle(R.string.app_name);
         GridView gridView = (GridView) findViewById(R.id.module_gridview);
         adapter = new MainModuleAdapter();
         gridView.setAdapter(adapter);

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_header_layout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="单号：" />
+
+                <TextView
+                    android:id="@+id/form_code_text"
+                    style="@style/text_add_content" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="垃圾桶号：" />
+
+                <TextView
+                    android:id="@+id/garbagecan_code_text"
+                    style="@style/text_add_content" />
+
+                <Button
+                    android:id="@+id/rfid_button"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="@dimen/medium_margin_8dp"
+                    android:background="@drawable/button_rfid_normal"
+                    android:scaleType="fitXY" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="科室：" />
+
+                <TextView
+                    android:id="@+id/room_text"
+                    style="@style/text_add_content"
+                    android:drawableRight="@drawable/icon_right_arrow2" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="护士：" />
+
+                <TextView
+                    android:id="@+id/nurse_text"
+                    style="@style/text_add_content"
+                    android:drawableRight="@drawable/icon_right_arrow2" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="类型：" />
+
+                <TextView
+                    android:id="@+id/waste_type_text"
+                    style="@style/text_add_content"
+                    android:drawableRight="@drawable/icon_right_arrow2" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="重量：" />
+
+                <EditText
+                    android:id="@+id/weight_text"
+                    style="@style/text_add_content"
+                    android:layout_height="36dp"
+                    android:digits=".0123456789" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="收集人：" />
+
+                <TextView
+                    android:id="@+id/collector_text"
+                    style="@style/text_add_content" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="时间：" />
+
+                <TextView
+                    android:id="@+id/dtm_text"
+                    style="@style/text_add_content" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <Button
+                android:id="@+id/save_print_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_20dp"
+                android:background="@drawable/reatangle_radius_10dp"
+                android:padding="10dp"
+                android:text="保存并打印"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -11,6 +11,40 @@
         <item name="android:background">@android:color/white</item>
     </style>
 
+    <style name="base_text">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="waste_add_linearlayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="text_label" parent="base_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:ems">5</item>
+    </style>
+
+    <style name="text_add_content" parent="base_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <style name="normal_diver">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/custom_diver</item>
+    </style>
+
     <style name="style_line">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">1px</item>
