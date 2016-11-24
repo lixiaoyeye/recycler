@@ -17,7 +17,7 @@ import health.rubbish.recycler.widget.HeaderLayout;
  */
 
 public class SetIpActivity extends BaseActivity {
-    HeaderLayout title;
+    HeaderLayout headerLayout;
     ClearEditText ip;
     ClearEditText port;
     Button save;
@@ -34,27 +34,28 @@ public class SetIpActivity extends BaseActivity {
     @Override
     protected void init() {
         shared = getSharedPreferences(ADDRESS, Activity.MODE_PRIVATE);
+        initHeaderView();
         initView();
-        initTitle();
         setView();
         setData();
     }
 
-    private void initView() {
-        title = (HeaderLayout) findViewById(R.id.header_layout);
-        ip = (ClearEditText) findViewById(R.id.get_ip);
-        port = (ClearEditText) findViewById(R.id.get_port);
-        save = (Button) findViewById(R.id.btn_conserve);
-    }
-
-    private void initTitle() {
-        title.showLeftBackButton(new View.OnClickListener() {
+    private void initHeaderView() {
+        headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
+        headerLayout.showLeftBackButton(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SetIpActivity.this.finish();
             }
         });
-        title.showTitle("配置");
+        headerLayout.showTitle("配置");
+    }
+
+    private void initView() {
+
+        ip = (ClearEditText) findViewById(R.id.get_ip);
+        port = (ClearEditText) findViewById(R.id.get_port);
+        save = (Button) findViewById(R.id.btn_conserve);
     }
 
     //初始化两个clearEdittext的显示

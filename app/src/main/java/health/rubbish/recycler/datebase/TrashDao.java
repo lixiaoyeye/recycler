@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import health.rubbish.recycler.base.App;
+import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
@@ -38,6 +39,28 @@ public class TrashDao {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
+    }
+
+    //转储获取当天已经转储垃圾信息
+    public List<TrashItem> getAllTransferedTrashToday() {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and ( status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, Constant.Status.ENTRUCKER}, null, null, " date desc");
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
+    }
+
+    //根据桶号获取待转储垃圾信息
+    public List<TrashItem> getAllUnTransferTrashTodayByCan(String trashcancode) {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and  status = ? and trashcancode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.DOWNLOAD, trashcancode}, null, null, " date asc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }

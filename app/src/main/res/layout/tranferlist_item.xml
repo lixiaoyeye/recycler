@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="57dp"
+    android:minHeight="57dp"
+    android:descendantFocusability="blocksDescendants">
+
+
+    <TextView
+        android:id="@+id/tranferlist_item_status"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="转储"
+        android:background="@drawable/status_transfer"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/tranferlist_item_trashcode_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"
+        android:text="垃圾单号："
+        android:textColor="@color/base_color_text_gray"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tranferlist_item_trashcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/tranferlist_item_status"
+        android:layout_toRightOf="@+id/tranferlist_item_trashcode_label"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:lines="1"
+        android:text="123445"
+        android:ellipsize="end"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tranferlist_item_trashcan_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tranferlist_item_trashcode_label"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="垃圾桶号："
+        android:textColor="@color/base_color_text_gray"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tranferlist_item_trashcan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tranferlist_item_trashcan_label"
+        android:layout_below="@+id/tranferlist_item_trashcode_label"
+        android:layout_marginTop="5dp"
+        android:lines="1"
+        android:text="123445"
+        android:ellipsize="end"
+        android:textColor="@color/base_color_text_gray"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tranferlist_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/tranferlist_item_status"
+        android:layout_below="@+id/tranferlist_item_trashcode_label"
+        android:layout_marginTop="5dp"
+        android:lines="1"
+        android:text="2016-09-78 12:20"
+        android:ellipsize="end"
+        android:textColor="@color/base_color_text_gray"
+        android:textSize="15sp" />
+
+    <View style="@style/style_line_left10dp"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

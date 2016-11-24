@@ -9,10 +9,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import health.rubbish.recycler.base.App;
+import health.rubbish.recycler.datebase.CatogeryDao;
+import health.rubbish.recycler.datebase.DepartmentDao;
+import health.rubbish.recycler.entity.CatogeryItem;
+import health.rubbish.recycler.entity.DepartmentItem;
 import health.rubbish.recycler.entity.LoginUser;
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.activity.MainActivity;
@@ -169,7 +177,48 @@ public class LoginActivity extends BaseActivity {
 
                 App.ctx.setCurrentUser(loginUser);
                 LoginUtil.saveLoginUser(loginUser);
-                jump();
+
+                JSONArray jsonArray = jsonObject.getJSONArray("department_row");
+                final  List<DepartmentItem> departmentItemList = new ArrayList<>();
+                DepartmentItem departmentItem;
+                JSONObject object;
+                for (int i= 0;i<jsonArray.length();i++)
+                {
+                    object = jsonArray.getJSONObject(i);
+                    departmentItem = new DepartmentItem();
+                    departmentItem.departcode = object.getString("departcode");
+                    departmentItem.departname = object.getString("departname");
+                    departmentItem.departareacode = object.getString("departareacode");
+                    departmentItem.departarea = object.getString("departarea");
+                    departmentItem.nurseid = object.getString("nurseid");
+                    departmentItem.nurse = object.getString("nurse");
+                    departmentItem.nursephone = object.getString("nursephone");
+                    departmentItemList.add(departmentItem);
+                }
+
+
+                jsonArray = jsonObject.getJSONArray("trashsort_row");
+                final List<CatogeryItem> catogeryItems = new ArrayList<>();
+                CatogeryItem categorycode;
+                for (int i= 0;i<jsonArray.length();i++)
+                {
+                    object = jsonArray.getJSONObject(i);
+                    categorycode = new CatogeryItem();
+                    categorycode.categorycode = object.getString("categorycode");
+                    categorycode.categoryname = object.getString("categoryname");
+                    catogeryItems.add(categorycode);
+                }
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DepartmentDao.getInstance().setAllDepartment(departmentItemList);
+                        CatogeryDao.getInstance().setAllCatogery(catogeryItems);
+                    }
+                }).start();
+
+
+                jumpToMain();
             }
             else
             {
@@ -182,7 +231,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void jump()
+    private void jumpToMain()
     {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
