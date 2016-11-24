@@ -11,10 +11,11 @@ public class Constant {
     }
 
     public static class Status{
-        public static final String NEWCOLLECT = "0";
-        public static final String UPLOAD = "1";
-        public static final String DOWNLOAD = "2";
-        public static final String TRASFER = "3";
-        public static final String ENTRUCKER = "4";
+        public static final String NEWCOLLECT = "0"; //新收集
+        public static final String UPLOAD = "1";  //已上传
+        public static final String DOWNLOAD = "2"; //已下载
+        public static final String TRASFERING = "30"; //转储中
+        public static final String TRASFER = "3"; //已转储
+        public static final String ENTRUCKER = "4"; //已装车
     }
 }
