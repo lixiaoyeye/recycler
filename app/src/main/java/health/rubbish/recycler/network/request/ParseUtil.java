@@ -24,7 +24,7 @@ public class ParseUtil {
         try {
             JSONObject object = new JSONObject(json);
             JSONArray array = object.optJSONArray("rows");
-            resps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), WasteUploadResp.class);
+            //resps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), WasteUploadResp.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class ParseUtil {
         try {
             JSONObject object = new JSONObject(json);
             JSONArray array = object.optJSONArray("rows");
-            multiTrashResps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), MultiTrashResp.class);
+            //multiTrashResps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), MultiTrashResp.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

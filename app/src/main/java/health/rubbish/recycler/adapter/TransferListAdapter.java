@@ -64,19 +64,19 @@ public class TransferListAdapter extends BaseAdapter {
         holder.item_trashcan.setText(bean.trashcancode);
         holder.item_time.setText(bean.colletime);
         if (!TextUtils.isEmpty(bean.status) && bean.status.equals(Constant.Status.NEWCOLLECT)) {
-            holder.item_status.setText("收集");
+            holder.item_status.setText("鏀堕泦");
             holder.item_status.setBackgroundResource(R.drawable.status_newcollect);
         } else if (!TextUtils.isEmpty(bean.status) && bean.status.equals(Constant.Status.UPLOAD)) {
-            holder.item_status.setText("上传");
+            holder.item_status.setText("涓婁紶");
             holder.item_status.setBackgroundResource(R.drawable.status_upload);
         }else if (!TextUtils.isEmpty(bean.status) && bean.status.equals(Constant.Status.DOWNLOAD)) {
-            holder.item_status.setText("下载");
+            holder.item_status.setText("涓嬭浇");
             holder.item_status.setBackgroundResource(R.drawable.status_download);
         }else if (!TextUtils.isEmpty(bean.status) && bean.status.equals(Constant.Status.TRASFER)) {
-            holder.item_status.setText("转储");
+            holder.item_status.setText("杞偍");
             holder.item_status.setBackgroundResource(R.drawable.status_transfer);
         }else if (!TextUtils.isEmpty(bean.status) && bean.status.equals(Constant.Status.ENTRUCKER)) {
-            holder.item_status.setText("装车");
+            holder.item_status.setText("瑁呰溅");
             holder.item_status.setBackgroundResource(R.drawable.status_entrucker);
         }
         return view;
