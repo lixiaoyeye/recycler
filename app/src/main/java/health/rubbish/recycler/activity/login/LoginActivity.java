@@ -120,6 +120,7 @@ public class LoginActivity extends BaseActivity {
                 .add("userid", userid)
                 .add("password", password)
                 .build();
+        showDialog("正在登陆……");
         Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
         call.enqueue(new Callback()
         {

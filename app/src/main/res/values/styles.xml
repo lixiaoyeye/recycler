@@ -124,4 +124,10 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="style_space">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">8dp</item>
+        <item name="android:background">@color/event_bg</item>
+    </style>
 </resources>

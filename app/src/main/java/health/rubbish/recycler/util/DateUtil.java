@@ -42,7 +42,7 @@ public class DateUtil {
     }
 
     /**
-     * @return yyyy-MM
+     * @return yyyy-MM-dd
      */
     public static String getDateString(DateFormat format) {
         return getDateString(new Date(),format) ;
@@ -189,5 +189,36 @@ public class DateUtil {
             result = olddate;
         }
         return result;
+    }
+
+
+    public static Calendar getFirstDayOfWeek(Calendar c) {
+        Calendar calendar = (Calendar) c.clone();
+        int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
+        if (day_of_week == 0) day_of_week = 7;
+        calendar.add(Calendar.DATE, 1 - day_of_week);
+        return calendar;
+    }
+
+    public static Calendar getLastDayOfWeek(Calendar c) {
+        Calendar calendar = (Calendar) c.clone();
+        int day_of_week = calendar.get(Calendar.DAY_OF_WEEK);
+        if (day_of_week == 0) day_of_week = 7;
+        calendar.add(Calendar.DATE, 7 - day_of_week);
+        return calendar;
+    }
+
+    public static Calendar getFirstDayOfMonth(Calendar c) {
+        Calendar calendar = (Calendar) c.clone();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return calendar;
+    }
+
+    public static Calendar getLastDayOfMonth(Calendar c) {
+        Calendar calendar = (Calendar) c.clone();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return calendar;
     }
 }

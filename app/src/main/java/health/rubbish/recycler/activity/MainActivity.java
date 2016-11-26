@@ -6,6 +6,7 @@ import android.widget.GridView;
 
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.adapter.MainModuleAdapter;
+import health.rubbish.recycler.appupdate.AppUpdate;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.widget.HeaderLayout;
 
@@ -15,6 +16,7 @@ import health.rubbish.recycler.widget.HeaderLayout;
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private MainModuleAdapter adapter;
+    private boolean autoupdate = true;
 
     @Override
     protected int getLayoutId() {
@@ -23,6 +25,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
     @Override
     protected void init() {
+        apkAutoUpdate();
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showTitle(R.string.app_name);
         GridView gridView = (GridView) findViewById(R.id.module_gridview);
@@ -45,5 +48,14 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             case R.string.data_query:
                 break;
         }
+    }
+
+    private void apkAutoUpdate()
+    {
+        if(autoupdate){
+            AppUpdate appUpdate=new AppUpdate(this,true);
+            appUpdate.update();
+        }
+        autoupdate=false;
     }
 }
