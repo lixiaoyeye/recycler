@@ -161,10 +161,6 @@ public class TransferAddActivity extends BaseActivity {
     public class TransferAddAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            for (TrashItem item:rows)
-            {
-                item.status = Constant.Status.TRASFERING;
-            }
             TrashDao.getInstance().setAllTrash(rows);
             return null;
         }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_header_layout" />
+
+    <ListView
+        android:id="@+id/entruckerlist_listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:cacheColorHint="@color/white"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none" />
+
+    <View style="@style/style_line"/>
+
+    <TextView
+        android:id="@+id/entruckerlist_entrucker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FF8000"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="- - - 垃 圾 转 储 - - -"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+</LinearLayout>

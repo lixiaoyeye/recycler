@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_header_layout" />
+    <LinearLayout style="@style/style_add_LinearLayout">
+        <TextView
+            style="@style/style_add_label"
+            android:text="装车人：" />
+
+        <TextView
+            android:id="@+id/entruckeradd_entrucker"
+            style="@style/style_add_text"/>
+    </LinearLayout>
+    <LinearLayout style="@style/style_add_LinearLayout">
+        <TextView
+            style="@style/style_add_label"
+            android:text="装车时间：" />
+
+        <TextView
+            android:id="@+id/entruckeradd_entrucktime"
+            style="@style/style_add_text"/>
+    </LinearLayout>
+    <LinearLayout style="@style/style_add_LinearLayout">
+        <TextView
+            style="@style/style_add_label"
+            android:text="车牌号：" />
+
+        <EditText
+            android:id="@+id/entruckeradd_platnumber"
+            style="@style/style_add_text_arrow"
+            android:hint="请输入车牌号" />
+    </LinearLayout>
+    <LinearLayout style="@style/style_add_LinearLayout">
+        <TextView
+            style="@style/style_add_label"
+            android:text="司机姓名：" />
+
+        <TextView
+            android:id="@+id/entruckeradd_driver"
+            style="@style/style_add_text_arrow"
+            android:hint="请输入司机姓名" />
+    </LinearLayout>
+
+    <View style="@style/style_line_left10dp" />
+
+    <LinearLayout style="@style/style_add_LinearLayout">
+
+        <TextView
+            style="@style/style_add_label"
+            android:text="司机电话：" />
+
+        <TextView
+            android:id="@+id/entruckeradd_driverphone"
+            style="@style/style_add_text_arrow"
+            android:hint="请输入司机电话" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/style_add_LinearLayout">
+
+        <TextView
+            style="@style/style_add_label"
+            android:text="垃圾箱号：" />
+
+        <TextView
+            android:id="@+id/entruckeradd_dustybincode"
+            style="@style/style_add_text_arrow"
+            android:hint="请扫描垃圾箱RFID" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/dynamic_bg"
+        android:paddingLeft="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="֪转储垃圾列表"
+            android:textColor="@color/base_color_text_gray"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <View style="@style/style_line" />
+
+    <ListView
+        android:id="@+id/entruckeradd_listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:cacheColorHint="@color/white"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none" />
+
+    <View style="@style/style_line" />
+
+
+</LinearLayout>

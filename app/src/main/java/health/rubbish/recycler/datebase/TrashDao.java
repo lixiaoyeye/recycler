@@ -67,6 +67,26 @@ public class TrashDao {
         return result;
     }
 
+    //获取当天已装车垃圾信息
+    public List<TrashItem> getAllEntruckeredTrashToday() {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and status = ? ", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER}, null, null, " date desc");
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
+    }
+    //根据桶号获取待装车垃圾信息
+    public List<TrashItem> getAllUnEntruckerTrashTodayByCan(String dustybincode) {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and  status = ? and dustybincode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, dustybincode}, null, null, " date asc");
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
+    }
     //当前垃圾信息入库
     public  void setAllTrash(List<TrashItem> trashItems) {
         deleteOldTrash(-7);
@@ -99,12 +119,19 @@ public class TrashDao {
         item.nursephone = cursor.getString(cursor.getColumnIndex("nursephone"));
 
         item.trashstation = cursor.getString(cursor.getColumnIndex("trashstation"));
-        item.dustbincode = cursor.getString(cursor.getColumnIndex("dustbincode"));
+        item.dustybincode = cursor.getString(cursor.getColumnIndex("dustybincode"));
         item.transfertime = cursor.getString(cursor.getColumnIndex("transfertime"));
         item.transferid = cursor.getString(cursor.getColumnIndex("transferid"));
         item.transfer = cursor.getString(cursor.getColumnIndex("transfer"));
         item.transferphone = cursor.getString(cursor.getColumnIndex("transferphone"));
 
+        item.platnumber = cursor.getString(cursor.getColumnIndex("platnumber"));
+        item.entrucktime = cursor.getString(cursor.getColumnIndex("entrucktime"));
+        item.entruckerid = cursor.getString(cursor.getColumnIndex("entruckerid"));
+        item.entrucker = cursor.getString(cursor.getColumnIndex("entrucker"));
+        item.entruckerphone = cursor.getString(cursor.getColumnIndex("entruckerphone"));
+        item.driver = cursor.getString(cursor.getColumnIndex("driver"));
+        item.driverphone = cursor.getString(cursor.getColumnIndex("driverphone"));
         return item;
     }
 
@@ -161,11 +188,19 @@ public class TrashDao {
         values.put("nursephone", item.nursephone);
 
         values.put("trashstation", item.trashstation);
-        values.put("dustbincode", item.dustbincode);
+        values.put("dustybincode", item.dustybincode);
         values.put("transfertime", item.transfertime);
         values.put("transferid", item.transferid);
         values.put("transfer", item.transfer);
         values.put("transferphone", item.transferphone);
+        values.put("platnumber", item.platnumber);
+
+        values.put("entrucktime", item.entrucktime);
+        values.put("entruckerid", item.entruckerid);
+        values.put("entrucker", item.entrucker);
+        values.put("entruckerphone", item.entruckerphone);
+        values.put("driver", item.driver);
+        values.put("driverphone", item.driverphone);
         return values;
     }
 

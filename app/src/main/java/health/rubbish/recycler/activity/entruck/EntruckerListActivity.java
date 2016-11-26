@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
-import health.rubbish.recycler.activity.transfer.TransferAddActivity;
-import health.rubbish.recycler.adapter.TransferListAdapter;
+import health.rubbish.recycler.adapter.EntruckerListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
@@ -39,12 +38,12 @@ import okhttp3.Response;
  * Created by Lenovo on 2016/11/20.
  */
 
-public class EntruckListActivity extends BaseActivity {
+public class EntruckerListActivity extends BaseActivity {
     HeaderLayout headerLayout;
     ListView listView;
-    TextView transferView;
+    TextView entruckerView;
 
-    TransferListAdapter adapter;
+    EntruckerListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     //List<TrashItem> rows_download = new ArrayList<>();
     CustomProgressDialog progressDialog;
@@ -52,7 +51,7 @@ public class EntruckListActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_transferlist;
+        return R.layout.activity_entruckerlist;
     }
 
     @Override
@@ -65,18 +64,18 @@ public class EntruckListActivity extends BaseActivity {
     private void initHeaderView() {
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
-        headerLayout.showTitle("今日转储列表");
+        headerLayout.showTitle("垃圾装车列表");
         headerLayout.showRightTextButton("批量上传", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadTransferTrashInfo();
+                uploadEntruckerTrashInfo();
             }
         });
     }
 
     private void initView() {
 
-        listView = (ListView) findViewById(R.id.transferlist_listview);
+        listView = (ListView) findViewById(R.id.entruckerlist_listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -84,11 +83,11 @@ public class EntruckListActivity extends BaseActivity {
             }
         });
 
-        transferView = (TextView) findViewById(R.id.transferlist_transfer);
-        transferView.setOnClickListener(new View.OnClickListener() {
+        entruckerView = (TextView) findViewById(R.id.entruckerlist_entrucker);
+        entruckerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EntruckListActivity.this,TransferAddActivity.class);
+                Intent intent = new Intent(EntruckerListActivity.this,EntruckerAddActivity.class);
                 startActivity(intent);
 
             }
@@ -97,38 +96,39 @@ public class EntruckListActivity extends BaseActivity {
 
 
     private void setData() {
-        adapter = new TransferListAdapter(this);
+        adapter = new EntruckerListAdapter(this);
         adapter.setData(rows);
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
 
-        new TransferListAsyncTask().execute();
+        new EntruckerListAsyncTask().execute();
     }
 
-    private void uploadTransferTrashInfo() {
+    private void uploadEntruckerTrashInfo() {
         //创建okHttpClient对象
         OkHttpClient mOkHttpClient = new OkHttpClient();
         RequestBody requestBody = new FormBody.Builder()
                 .add("userid", LoginUtil.getLoginUser().userid)
                 .add("datas", getdatas())
                 .build();
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
+        Call call = mOkHttpClient.newCall(NetUtil.getRequest("uploadEntruckerTrashInfo",requestBody));
         call.enqueue(new Callback()
         {
             @Override
             public void onFailure(Call call, IOException e) {
                 hideDialog();
-                new AlertDialog.Builder(EntruckListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                new AlertDialog.Builder(EntruckerListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 hideDialog();
-                parseLoginResponse(response.body().string());
+                parseResponse(response.body().string());
 
             }
         });
     }
+
 
     private String  getdatas()
     {
@@ -136,15 +136,18 @@ public class EntruckListActivity extends BaseActivity {
         try {
             JSONObject object;
             for (TrashItem item : rows) {
-                if (item.status.equals(Constant.Status.TRASFERING)) {
+                if (item.status.equals(Constant.Status.ENTRUCKERING)) {
                     object = new JSONObject();
                     object.put("id", item.trashcode);
                     object.put("trashcode", item.trashcode);
-                    object.put("status", Constant.Status.TRASFER);
-                    object.put("transfertime", item.transfertime);
-                    object.put("transferid", item.transferid);
-                    object.put("trashstation", item.trashstation);
-                    object.put("dustbincode", item.dustbincode);
+                    object.put("status", Constant.Status.ENTRUCKER);
+                    object.put("platnumber", item.platnumber);
+                    object.put("entrucktime", item.entrucktime);
+                    object.put("entruckerid", item.entruckerid);
+                    object.put("entrucker", item.entrucker);
+                    object.put("entruckerphone", item.entruckerphone);
+                    object.put("driver", item.driver);
+                    object.put("driverphone", item.driverphone);
                     jsonArray.put(object);
                 }
             }
@@ -156,7 +159,7 @@ public class EntruckListActivity extends BaseActivity {
         return jsonArray.toString();
     }
 
-    private void parseLoginResponse(String result)
+    private void parseResponse(String result)
     {
         try {
             JSONObject jsonObject = new JSONObject(result);
@@ -169,11 +172,11 @@ public class EntruckListActivity extends BaseActivity {
                 for (int i= 0;i<jsonArray.length();i++)
                 {
                     object = jsonArray.getJSONObject(i);
-                    if (object.getString("status").equals(Constant.Status.TRASFERING)) {
+                    if (object.getString("status").equals(Constant.Status.ENTRUCKER)) {
                         TrashItem item = getTrashItemByCode(object.getString("trashcode"));
                         if (item!=null )
                         {
-                            item.status =Constant.Status.TRASFERING;
+                            item.status =Constant.Status.ENTRUCKER;
                             items.add(item);
                         }
                     }
@@ -210,10 +213,10 @@ public class EntruckListActivity extends BaseActivity {
         return null;
     }
 
-    public class TransferListAsyncTask extends AsyncTask<Void, Void, List<TrashItem>> {
+    public class EntruckerListAsyncTask extends AsyncTask<Void, Void, List<TrashItem>> {
         @Override
         protected List<TrashItem> doInBackground(Void... params) {
-            return TrashDao.getInstance().getAllTransferedTrashToday();
+            return TrashDao.getInstance().getAllEntruckeredTrashToday();
         }
 
         @Override
@@ -227,7 +230,7 @@ public class EntruckListActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             if (progressDialog == null) {
-                progressDialog = new CustomProgressDialog(EntruckListActivity.this);
+                progressDialog = new CustomProgressDialog(EntruckerListActivity.this);
             }
             progressDialog.show();
         }

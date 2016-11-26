@@ -26,9 +26,19 @@ public class TrashItem implements Serializable{
     public String nursephone;            // 值班护士电话
 
     public String trashstation;            //垃圾站名
-    public String dustbincode;            //垃圾箱逻辑编号(RFID编码)
+    public String dustybincode;            //垃圾箱逻辑编号(RFID编码)
     public String transfertime;            // 垃圾转储时间
     public String transferid ;            //转储人id
     public String transfer ;            //转储人姓名
     public String transferphone;            //转储人电话
+
+
+    public String platnumber;            //车牌号
+    public String entrucktime;            //垃圾装车时间
+    public String entruckerid;            //装车人id
+    public String entrucker ;            //装车人姓名
+    public String entruckerphone;            //装车人电话
+    public String driver;            //司机姓名
+    public String driverphone;            //司机电话
+
 }

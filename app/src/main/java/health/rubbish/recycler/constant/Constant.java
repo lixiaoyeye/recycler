@@ -16,6 +16,7 @@ public class Constant {
         public static final String DOWNLOAD = "2"; //已下载
         public static final String TRASFERING = "30"; //转储中
         public static final String TRASFER = "3"; //已转储
+        public static final String ENTRUCKERING = "40"; //转储中
         public static final String ENTRUCKER = "4"; //已装车
     }
 }

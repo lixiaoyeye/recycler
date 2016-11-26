@@ -113,7 +113,7 @@ public class TransferListActivity extends BaseActivity {
                 .add("userid", LoginUtil.getLoginUser().userid)
                 .add("datas", getdatas())
                 .build();
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
+        Call call = mOkHttpClient.newCall(NetUtil.getRequest("uploadTransferTrashInfo",requestBody));
         call.enqueue(new Callback()
         {
             @Override
@@ -145,7 +145,7 @@ public class TransferListActivity extends BaseActivity {
                     object.put("transfertime", item.transfertime);
                     object.put("transferid", item.transferid);
                     object.put("trashstation", item.trashstation);
-                    object.put("dustbincode", item.dustbincode);
+                    object.put("dustybincode", item.dustybincode);
                     jsonArray.put(object);
                 }
             }
@@ -170,11 +170,11 @@ public class TransferListActivity extends BaseActivity {
                 for (int i= 0;i<jsonArray.length();i++)
                 {
                     object = jsonArray.getJSONObject(i);
-                    if (object.getString("status").equals(Constant.Status.TRASFERING)) {
+                    if (object.getString("status").equals(Constant.Status.TRASFER)) {
                         TrashItem item = getTrashItemByCode(object.getString("trashcode"));
                         if (item!=null )
                         {
-                            item.status =Constant.Status.TRASFERING;
+                            item.status =Constant.Status.TRASFER;
                             items.add(item);
                         }
                     }

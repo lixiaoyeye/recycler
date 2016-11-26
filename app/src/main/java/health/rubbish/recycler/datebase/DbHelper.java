@@ -37,8 +37,11 @@ public class DbHelper extends SQLiteOpenHelper{
                 "collectphone VARCHAR(100),departareacode  VARCHAR(100),departarea  VARCHAR(100)" +
                 "departcode VARCHAR(100),departname  VARCHAR(100),nurseid  VARCHAR(100)" +
                 "nurse VARCHAR(100),nursephone  VARCHAR(100),trashstation  VARCHAR(100)" +
-                "dustbincode VARCHAR(100),departareacode  VARCHAR(100),transfertime  VARCHAR(100)" +
-                "transferid VARCHAR(100),transfer  VARCHAR(100),transferphone  VARCHAR(100))");
+                "dustybincode VARCHAR(100),departareacode  VARCHAR(100),transfertime  VARCHAR(100)" +
+                "transferid VARCHAR(100),transfer  VARCHAR(100),transferphone  VARCHAR(100)" +
+                "platnumber VARCHAR(100),entrucktime  VARCHAR(100),entruckerid  VARCHAR(100)" +
+                "entrucker VARCHAR(100),entruckerphone  VARCHAR(100),driver  VARCHAR(100)" +
+                "driverphone VARCHAR(100))");
     }
 
     @Override

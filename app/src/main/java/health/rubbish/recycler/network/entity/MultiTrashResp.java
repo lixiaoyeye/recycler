@@ -27,7 +27,7 @@ public class MultiTrashResp {
     public String nursephone;// ” 值班护士电话” ，
 
     public String trashstation;//”垃圾站名” ，
-    public String dustbincode;//”垃圾箱逻辑编号(RFID编码)” ，
+    public String dustybincode;//”垃圾箱逻辑编号(RFID编码)” ，
     public String transfertime;//” 垃圾转储时间” ，
     public String transferid;//“转储人id“，
     public String transfer;//“转储人姓名“，
