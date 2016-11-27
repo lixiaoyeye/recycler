@@ -3,6 +3,7 @@ package health.rubbish.recycler.activity.entruck;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,11 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.stat.StatCollectActivity;
+import health.rubbish.recycler.activity.transfer.TransferListActivity;
 import health.rubbish.recycler.adapter.EntruckerListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.TrashItem;
+import health.rubbish.recycler.network.http.CustomHttpClient;
+import health.rubbish.recycler.network.request.ParseCallback;
+import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
 import health.rubbish.recycler.widget.CustomProgressDialog;
@@ -59,6 +65,12 @@ public class EntruckerListActivity extends BaseActivity {
         initHeaderView();
         initView();
         setData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new EntruckerListAsyncTask().execute();
     }
 
     private void initHeaderView() {
@@ -101,32 +113,30 @@ public class EntruckerListActivity extends BaseActivity {
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
 
-        new EntruckerListAsyncTask().execute();
+
     }
 
     private void uploadEntruckerTrashInfo() {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("userid", LoginUtil.getLoginUser().userid)
-                .add("datas", getdatas())
-                .build();
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("uploadEntruckerTrashInfo",requestBody));
-        call.enqueue(new Callback()
-        {
+        CustomHttpClient client = new CustomHttpClient();
+        client.addParam("userid",  LoginUtil.getLoginUser().userid);
+        Log.e("1111","getdatas(): "+getdatas());
+        client.addParam("datas", getdatas());
+        showDialog("正在上传……");
+        new RequestUtil().sendPost("uploadEntruckerTrashInfo",client,new ParseCallback<String>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onComplete(String result) {
+                Log.e("123","uploadEntruckerTrashInfo = "+result);
+                hideDialog();
+                parseResponse(result);
+            }
+
+            @Override
+            public void onError(String error) {
                 hideDialog();
                 new AlertDialog.Builder(EntruckerListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
             }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                hideDialog();
-                parseResponse(response.body().string());
-
-            }
         });
+
     }
 
 
@@ -181,14 +191,12 @@ public class EntruckerListActivity extends BaseActivity {
                         }
                     }
                 }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+
+
                         TrashDao.getInstance().setAllTrash(items);
-                    }
-                }).start();
-                adapter.setData(rows);
-                toast("成功");
+                        adapter.setData(rows);
+
+                        toast("成功");
             }
             else
             {

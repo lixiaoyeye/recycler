@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,7 +45,7 @@ import okhttp3.Response;
 public class TransferAddActivity extends BaseActivity {
     HeaderLayout headerLayout;
     ListView listView;
-    TextView transferadd_trashcan;
+    EditText transferadd_trashcan;
     TextView transferadd_dustybin;
 
     TrashListAdapter adapter;
@@ -74,6 +75,7 @@ public class TransferAddActivity extends BaseActivity {
                 for (TrashItem item:rows)
                 {
                     item.status = Constant.Status.TRASFERING;
+                    item.dustybincode = transferadd_dustybin.getText().toString();
                 }
                 new TransferAddAsyncTask().execute();
             }
@@ -90,23 +92,14 @@ public class TransferAddActivity extends BaseActivity {
             }
         });
 
-        transferadd_trashcan = (TextView) findViewById(R.id.transferadd_trashcan);
-        transferadd_trashcan.setOnClickListener(new View.OnClickListener() {
+        transferadd_trashcan = (EditText) findViewById(R.id.transferadd_trashcan);
+        /*transferadd_trashcan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2016/11/23 扫rfid卡
             }
-        });
-
-        transferadd_dustybin = (TextView) findViewById(R.id.transferadd_dustybin);
-        transferadd_dustybin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 2016/11/23 扫rfid卡
-            }
-        });
-
-        transferadd_dustybin.addTextChangedListener(new TextWatcher() {
+        });*/
+        transferadd_trashcan.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -119,7 +112,15 @@ public class TransferAddActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                new TransferAddListAsyncTask().execute(transferadd_dustybin.getText().toString());
+                new TransferAddListAsyncTask().execute(transferadd_trashcan.getText().toString());
+            }
+        });
+
+        transferadd_dustybin = (TextView) findViewById(R.id.transferadd_dustybin);
+        transferadd_dustybin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 2016/11/23 扫rfid卡
             }
         });
     }

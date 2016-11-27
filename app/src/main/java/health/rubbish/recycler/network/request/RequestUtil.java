@@ -46,8 +46,8 @@ public class RequestUtil {
         }
     };
 
-    private RequestUtil() {
-
+    public RequestUtil() {
+        parseUtil = new ParseUtil();
     }
 
     public RequestUtil(ParseCallback callback) {
@@ -120,6 +120,18 @@ public class RequestUtil {
         client.addParam("date", date);
         client.addParam("type", type);
         client.executeReq("downloadMultiTrashInfo", new CustomCallback() {
+            @Override
+            public void onResponse(Message message) {
+                if (handler != null)
+                    handler.sendMessage(message);
+            }
+        });
+    }
+
+
+    public void sendPost(String service,CustomHttpClient client,ParseCallback callback) {
+        this.callback = callback;
+        client.executeReq(service, new CustomCallback() {
             @Override
             public void onResponse(Message message) {
                 if (handler != null)

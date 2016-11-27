@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +49,7 @@ public class TrashDao {
     public List<TrashItem> getAllTransferedTrashToday() {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER,  Constant.Status.TRASFERING, Constant.Status.ENTRUCKER}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -59,7 +60,9 @@ public class TrashDao {
     public List<TrashItem> getAllUnTransferTrashTodayByCan(String trashcancode) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Log.e("0000000",trashcancode);
         Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and trashcancode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.DOWNLOAD, trashcancode}, null, null, " date asc");
+
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -70,7 +73,7 @@ public class TrashDao {
     public List<TrashItem> getAllEntruckeredTrashToday() {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and status = ? ", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (status = ? or status = ?)", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER, Constant.Status.ENTRUCKERING}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -81,6 +84,7 @@ public class TrashDao {
     public List<TrashItem> getAllUnEntruckerTrashTodayByCan(String dustybincode) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Log.e("0000000",dustybincode);
         Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and dustybincode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, dustybincode}, null, null, " date asc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));

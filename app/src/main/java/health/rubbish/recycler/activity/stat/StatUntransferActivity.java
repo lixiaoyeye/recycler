@@ -2,6 +2,7 @@ package health.rubbish.recycler.activity.stat;
 
 import android.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -22,6 +23,9 @@ import health.rubbish.recycler.R;
 import health.rubbish.recycler.adapter.StatAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.entity.StatItem;
+import health.rubbish.recycler.network.http.CustomHttpClient;
+import health.rubbish.recycler.network.request.ParseCallback;
+import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
@@ -175,26 +179,22 @@ public class StatUntransferActivity extends BaseActivity implements View.OnClick
     }
 
     public void getDataFromService() {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("userid", LoginUtil.getLoginUser().userid)
-                .add("startdate", starttime)
-                .add("enddate", endtime)
-                .build();
+        CustomHttpClient client = new CustomHttpClient();
+        client.addParam("userid",  LoginUtil.getLoginUser().userid);
+        client.addParam("startdate", starttime);
+        client.addParam("enddate", endtime);
         showDialog("正在获取数据……");
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("statUntransferTrashInfo",requestBody));
-        call.enqueue(new Callback()
-        {
+        new RequestUtil().sendPost("statUntransferTrashInfo",client,new ParseCallback<String>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                hideDialog();
-                new AlertDialog.Builder(StatUntransferActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+            public void onComplete(String result) {
+                Log.e("123","statUntransferTrashInfo = "+result);
+                parseResponse(result);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                parseResponse(response.body().string());
+            public void onError(String error) {
+                hideDialog();
+                new AlertDialog.Builder(StatUntransferActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
             }
         });
     }

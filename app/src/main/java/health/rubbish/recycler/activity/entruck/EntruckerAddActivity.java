@@ -5,6 +5,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,7 +37,7 @@ public class EntruckerAddActivity extends BaseActivity {
     TextView entruckeradd_platnumber;
     TextView entruckeradd_driver;
     TextView entruckeradd_driverphone;
-    TextView entruckeradd_dustybincode;
+    EditText entruckeradd_dustybincode;
 
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
@@ -64,12 +65,6 @@ public class EntruckerAddActivity extends BaseActivity {
             public void onClick(View v) {
                 for (TrashItem item:rows)
                 {
-                    entruckeradd_entrucker = (TextView) findViewById(R.id.entruckeradd_entrucker);
-                    entruckeradd_entrucktime = (TextView) findViewById(R.id.entruckeradd_entrucktime);
-                    entruckeradd_platnumber = (TextView) findViewById(R.id.entruckeradd_platnumber);
-                    entruckeradd_driver = (TextView) findViewById(R.id.entruckeradd_driver);
-                    entruckeradd_driverphone = (TextView) findViewById(R.id.entruckeradd_driverphone);
-                    entruckeradd_dustybincode = (TextView) findViewById(R.id.entruckeradd_dustybincode);
                     item.status = Constant.Status.ENTRUCKERING;
                     item.entruckerid = entruckerid;
                     item.entrucker = entruckeradd_entrucker.getText().toString();
@@ -98,13 +93,13 @@ public class EntruckerAddActivity extends BaseActivity {
         entruckeradd_platnumber = (TextView) findViewById(R.id.entruckeradd_platnumber);
         entruckeradd_driver = (TextView) findViewById(R.id.entruckeradd_driver);
         entruckeradd_driverphone = (TextView) findViewById(R.id.entruckeradd_driverphone);
-        entruckeradd_dustybincode = (TextView) findViewById(R.id.entruckeradd_dustybincode);
-        entruckeradd_dustybincode.setOnClickListener(new View.OnClickListener() {
+        entruckeradd_dustybincode = (EditText) findViewById(R.id.entruckeradd_dustybincode);
+        /*entruckeradd_dustybincode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2016/11/23 扫rfid卡
             }
-        });
+        });*/
 
         entruckeradd_dustybincode.addTextChangedListener(new TextWatcher() {
             @Override

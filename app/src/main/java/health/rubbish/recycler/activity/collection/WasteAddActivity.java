@@ -85,7 +85,8 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         Intent intent = new Intent(this, ReferenceActivity.class);
         switch (v.getId()) {
             case R.id.rfid_button:
-                readUtil.readUfhCard(ReadMode.EPC);
+                //readUtil.readUfhCard(ReadMode.EPC);
+                garbageCanCodeText.setText(""+((int)Math.random()*10000));
                 break;
             case R.id.area_text:
                 intent.putExtra(Constant.Reference.REFER_TITLE, "院区选择");
@@ -149,11 +150,12 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
      * 初始化读卡设备
      */
     private void initDevice() {
-        if (readUtil.initUfh(this) != 0) {
+        // TODO: 2016/11/27  
+        /*if (readUtil.initUfh(this) != 0) {
             ToastUtil.shortToast(this, "打开设备失败");
             rfidBtn.setEnabled(false);
         } else
-            rfidBtn.setEnabled(true);
+            rfidBtn.setEnabled(true);*/
     }
 
     /**
