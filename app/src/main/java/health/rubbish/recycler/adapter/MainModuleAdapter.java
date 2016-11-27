@@ -46,6 +46,7 @@ public class MainModuleAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_module_item, parent, false);
+            holder.moduleText = (TextView)convertView.findViewById(R.id.main_module_text) ;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

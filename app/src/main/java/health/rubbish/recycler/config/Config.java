@@ -17,9 +17,11 @@ public class Config {
 
     public static List<HashMap<String, Integer>> getMainModules() {
         List<HashMap<String, Integer>> modules = new ArrayList<>();
+
         HashMap<String, Integer> collect_module = new HashMap<>();
         collect_module.put(MODULE_NAME, R.string.rubbish_collection);
         modules.add(collect_module);
+
         HashMap<String, Integer> storage_module = new HashMap<>();
         storage_module.put(MODULE_NAME, R.string.rubbish_collection);
         modules.add(storage_module);

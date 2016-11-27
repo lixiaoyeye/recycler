@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import health.rubbish.recycler.base.App;
 import okhttp3.Request;
@@ -36,6 +37,7 @@ public class NetUtil {
                 .url(getServiceUrl(action))
                 .post(requestBody)
                 .build();
+        Log.e("request",getServiceUrl(action));
         return request;
     }
 }
