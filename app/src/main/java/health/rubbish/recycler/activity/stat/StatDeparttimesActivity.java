@@ -1,16 +1,11 @@
 package health.rubbish.recycler.activity.stat;
 
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class StatCollectActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener {
+public class StatDeparttimesActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener {
     private XListView listview;
     private ImageView date_pageturn_arrow_left;
     private ImageView date_pageturn_arrow_right;
@@ -59,7 +54,7 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_statcollect;
+        return R.layout.activity_statdeparttimes;
     }
 
     @Override
@@ -73,7 +68,7 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
     private void getIntentData() {
         type = getIntent().getStringExtra("type");
         time = getIntent().getStringExtra("time");
-        //title = getIntent().getStringExtra("title");
+       // title = getIntent().getStringExtra("title");
     }
 
     private void initDefaultData() {
@@ -87,7 +82,7 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
     private void initHeaderView() {
         HeaderLayout mHeaderLayout = (HeaderLayout) findViewById(R.id.header_layout);
         mHeaderLayout.showLeftBackButton();
-        mHeaderLayout.showTitle("垃圾收集统计");
+        mHeaderLayout.showTitle("未转储统计");
     }
 
     private void initView() {
@@ -95,10 +90,10 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
         date_pageturn_arrow_right = (ImageView) findViewById(R.id.date_pageturn_arrow_right);
         date_pageturn_date = (TextView) findViewById(R.id.date_pageturn_date);
 
-        listview = (XListView) findViewById(R.id.statcollect_listview);
+        listview = (XListView) findViewById(R.id.statdeparttimes_listview);
         listview.setPullLoadEnable(false);
         listview.setPullRefreshEnable(true);
-        adapter = new StatAdapter(this, rows,true,"收集垃圾","袋");
+        adapter = new StatAdapter(this, rows,true,"发车","次");
         listview.setAdapter(adapter);
         EmptyFiller.fill(this,listview,"暂无数据");
         setViewListener();
@@ -187,13 +182,13 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
                 .add("enddate", endtime)
                 .build();
         showDialog("正在获取数据……");
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("statCollectTrashInfo",requestBody));
+        Call call = mOkHttpClient.newCall(NetUtil.getRequest("statDeparttimesInfo",requestBody));
         call.enqueue(new Callback()
         {
             @Override
             public void onFailure(Call call, IOException e) {
                 hideDialog();
-                new AlertDialog.Builder(StatCollectActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                new AlertDialog.Builder(StatDeparttimesActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
             }
 
             @Override
@@ -220,9 +215,9 @@ public class StatCollectActivity extends BaseActivity implements View.OnClickLis
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject tempobj = jsonArray.getJSONObject(i);
                 entity = new StatItem();
-                entity.code = tempobj.getString("departcode");
-                entity.name = tempobj.getString("departname");
-                entity.num = tempobj.getString("collectnum");
+                entity.code = tempobj.getString("platnumber");
+                entity.name = tempobj.getString("driver");
+                entity.num = tempobj.getString("departtimes");
                     rows.add(entity);
             }
             page++;

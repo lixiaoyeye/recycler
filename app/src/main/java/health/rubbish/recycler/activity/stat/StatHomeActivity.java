@@ -4,43 +4,24 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import health.rubbish.recycler.R;
-import health.rubbish.recycler.activity.login.LoginActivity;
-import health.rubbish.recycler.activity.transfer.TransferAddActivity;
-import health.rubbish.recycler.adapter.TransferListAdapter;
-import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.base.BaseActivity;
-import health.rubbish.recycler.constant.Constant;
-import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.StatEntity;
-import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
-import health.rubbish.recycler.widget.CustomProgressDialog;
-import health.rubbish.recycler.widget.EmptyFiller;
 import health.rubbish.recycler.widget.HeaderLayout;
 import health.rubbish.recycler.widget.ProgressWheel;
 import okhttp3.Call;
@@ -158,8 +139,7 @@ public class StatHomeActivity extends BaseActivity {
         collectnumLyt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2016/11/26  
-                Intent intent = new Intent(StatHomeActivity.this, StatHomeActivity.class);
+                Intent intent = new Intent(StatHomeActivity.this, StatCollectActivity.class);
                 intent.putExtra("type",type);
                 intent.putExtra("time",DateUtil.getDateString());
                 startActivity(intent);
@@ -177,7 +157,10 @@ public class StatHomeActivity extends BaseActivity {
         untransfernumLyt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2016/11/26  
+                Intent intent = new Intent(StatHomeActivity.this, StatUntransferActivity.class);
+                intent.putExtra("type",type);
+                intent.putExtra("time",DateUtil.getDateString());
+                startActivity(intent);
             }
         });
 
@@ -192,7 +175,10 @@ public class StatHomeActivity extends BaseActivity {
         dumpcartnumLyt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2016/11/26  
+                Intent intent = new Intent(StatHomeActivity.this, StatDeparttimesActivity.class);
+                intent.putExtra("type",type);
+                intent.putExtra("time",DateUtil.getDateString());
+                startActivity(intent);
             }
         });
 
