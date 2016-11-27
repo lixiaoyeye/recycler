@@ -192,7 +192,7 @@ public class EntruckerListActivity extends BaseActivity {
             }
             else
             {
-                toast("获取数据错误，无法登陆");
+                toast("获取数据失败");
             }
         }
         catch (Exception e)

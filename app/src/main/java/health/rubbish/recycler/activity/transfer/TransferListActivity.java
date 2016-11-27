@@ -125,7 +125,7 @@ public class TransferListActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 hideDialog();
-                parseLoginResponse(response.body().string());
+                parseResponse(response.body().string());
 
             }
         });
@@ -157,7 +157,7 @@ public class TransferListActivity extends BaseActivity {
         return jsonArray.toString();
     }
 
-    private void parseLoginResponse(String result)
+    private void parseResponse(String result)
     {
         try {
             JSONObject jsonObject = new JSONObject(result);
@@ -190,7 +190,7 @@ public class TransferListActivity extends BaseActivity {
             }
             else
             {
-                toast("获取数据错误，无法登陆");
+                toast("获取数据失败");
             }
         }
         catch (Exception e)
