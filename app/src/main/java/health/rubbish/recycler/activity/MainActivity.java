@@ -2,6 +2,7 @@ package health.rubbish.recycler.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -9,7 +10,9 @@ import android.widget.GridView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +99,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 break;
             case R.string.data_query:
                 break;
+            case R.string.data_stat:
+                intent.setClass(MainActivity.this, StatHomeActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -129,7 +136,15 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 //hideDialog();
-                parseResponse(response.body().string());
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                response.body().byteStream(),"utf-8"));//防止乱码
+                String line;
+                String result="";
+                while ((line = in.readLine()) != null) {
+                    result += line;
+                }
+                Log.e("result","downloadMultiTrashInfo = "+result);
+                parseResponse(result);
             }
         });
     }
@@ -186,7 +201,14 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
             else
             {
-                toast("获取数据失败");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideDialog();
+                        toast("获取数据失败");
+                    }
+                });
+
             }
         }
         catch (Exception e)

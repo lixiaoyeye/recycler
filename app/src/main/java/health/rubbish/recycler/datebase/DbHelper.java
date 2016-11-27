@@ -31,7 +31,7 @@ public class DbHelper extends SQLiteOpenHelper{
                 "date VARCHAR(100),categorycode  VARCHAR(100),categoryname  VARCHAR(100))");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS "+TRASH_TABLE+" (id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "rfidno VARCHAR(100),trashcode  VARCHAR(100),trashcancode  VARCHAR(100),status  VARCHAR(100)," +
+                "date VARCHAR(100),rfidno VARCHAR(100),trashcode  VARCHAR(100),trashcancode  VARCHAR(100),status  VARCHAR(100)," +
                 "colletime VARCHAR(100),categorycode  VARCHAR(100),categoryname  VARCHAR(100)," +
                 "weight VARCHAR(100),collectorid  VARCHAR(100),collector  VARCHAR(100)," +
                 "collectphone VARCHAR(100),departareacode  VARCHAR(100),departarea  VARCHAR(100)," +

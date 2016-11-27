@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -10,8 +10,8 @@
     <ListView
         android:id="@+id/transferlist_listview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header_layout"
         android:background="@color/white"
         android:cacheColorHint="@color/white"
         android:divider="@null"
@@ -19,7 +19,6 @@
         android:listSelector="@android:color/transparent"
         android:scrollbars="none" />
 
-    <View style="@style/style_line"/>
 
     <TextView
         android:id="@+id/transferlist_transfer"
@@ -32,4 +31,4 @@
         android:text="- - - 垃 圾 转 储 - - -"
         android:textColor="@color/white"
         android:textSize="16sp" />
-</LinearLayout>
+</RelativeLayout>

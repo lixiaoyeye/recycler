@@ -193,7 +193,6 @@ public class StatDeparttimesActivity extends BaseActivity implements View.OnClic
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                hideDialog();
                 parseResponse(response.body().string());
             }
         });
@@ -224,6 +223,12 @@ public class StatDeparttimesActivity extends BaseActivity implements View.OnClic
         } catch (JSONException e) {
             e.printStackTrace();
         }
-            adapter.setList(rows);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideDialog();
+                adapter.setList(rows);
+            }
+        });
     }
 }

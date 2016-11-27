@@ -209,7 +209,6 @@ public class StatHomeActivity extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                hideDialog();
                 parseResponse(response.body().string());
             }
         });
@@ -238,7 +237,14 @@ public class StatHomeActivity extends BaseActivity {
             weekStatEntity = JSON.parseObject(rowsObject.getString("week"), StatEntity.class);
             monthStatEntity = JSON.parseObject(rowsObject.getString("month"), StatEntity.class);
 
-            updateUI(dayStatEntity);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    hideDialog();
+                    updateUI(dayStatEntity);
+                }
+            });
+
 
         } catch (Exception e) {
 

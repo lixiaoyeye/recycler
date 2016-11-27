@@ -24,6 +24,7 @@
             android:id="@+id/entruckeradd_entrucktime"
             style="@style/style_add_text"/>
     </LinearLayout>
+    <View style="@style/style_line_left10dp" />
     <LinearLayout style="@style/style_add_LinearLayout">
         <TextView
             style="@style/style_add_label"
@@ -31,9 +32,10 @@
 
         <EditText
             android:id="@+id/entruckeradd_platnumber"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:hint="请输入车牌号" />
     </LinearLayout>
+    <View style="@style/style_line_left10dp" />
     <LinearLayout style="@style/style_add_LinearLayout">
         <TextView
             style="@style/style_add_label"
@@ -41,7 +43,7 @@
 
         <TextView
             android:id="@+id/entruckeradd_driver"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:hint="请输入司机姓名" />
     </LinearLayout>
 
@@ -55,10 +57,10 @@
 
         <TextView
             android:id="@+id/entruckeradd_driverphone"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:hint="请输入司机电话" />
     </LinearLayout>
-
+    <View style="@style/style_line_left10dp" />
     <LinearLayout style="@style/style_add_LinearLayout">
 
         <TextView

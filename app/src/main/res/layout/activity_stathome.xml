@@ -377,9 +377,10 @@
             android:layout_alignBottom="@+id/stathome_rootView"
             android:layout_alignTop="@+id/stathome_rootView"
             android:background="#ccffffff"
-            android:clickable="true">
+            android:clickable="true"
+            android:visibility="gone">
 
-            <net.luculent.unify.ui.view.ProgressWheel
+            <health.rubbish.recycler.widget.ProgressWheel
                 android:id="@+id/stathome_loading_progress"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

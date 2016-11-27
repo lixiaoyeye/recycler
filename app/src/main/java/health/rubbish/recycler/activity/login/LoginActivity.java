@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import health.rubbish.recycler.appupdate.ApkDownload;
 import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.datebase.CatogeryDao;
 import health.rubbish.recycler.datebase.DepartmentDao;
@@ -35,7 +37,9 @@ import health.rubbish.recycler.util.NetUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -111,7 +115,6 @@ public class LoginActivity extends BaseActivity {
 
         //判断是否有网络连接，如果有，网络验证连接，没有则离线登录。
         if (NetUtil.isNetAvailable()) {
-            hideDialog();
             netIdentify();
         } else {
             new AlertDialog.Builder(LoginActivity.this).setTitle("医废管理系统").setMessage("暂时无法连接到网络，请检查网络").setPositiveButton("确定", null).show();
@@ -125,7 +128,7 @@ public class LoginActivity extends BaseActivity {
                 .add("userid", userid)
                 .add("password", password)
                 .build();
-        showDialog("正在登陆……");
+        showDialog("正在登陆,请稍等……");
         Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
         call.enqueue(new Callback()
         {
@@ -137,7 +140,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                hideDialog();
+
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         response.body().byteStream(),"utf-8"));//防止乱码
                 String line;
@@ -226,20 +229,26 @@ public class LoginActivity extends BaseActivity {
                     catogeryItems.add(categorycode);
                 }
 
-                new Thread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         DepartmentDao.getInstance().setAllDepartment(departmentItemList);
                         CatogeryDao.getInstance().setAllCatogery(catogeryItems);
+                        hideDialog();
+                        jumpToMain();
                     }
-                }).start();
+                });
 
-
-                jumpToMain();
             }
             else
             {
-                toast("获取数据失败");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideDialog();
+                        toast("获取数据失败");
+                    }
+                });
             }
         }
         catch (Exception e)

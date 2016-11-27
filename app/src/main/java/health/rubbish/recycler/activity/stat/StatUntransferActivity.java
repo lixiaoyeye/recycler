@@ -193,7 +193,7 @@ public class StatUntransferActivity extends BaseActivity implements View.OnClick
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                hideDialog();
+
                 parseResponse(response.body().string());
             }
         });
@@ -224,6 +224,13 @@ public class StatUntransferActivity extends BaseActivity implements View.OnClick
         } catch (JSONException e) {
             e.printStackTrace();
         }
-            adapter.setList(rows);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideDialog();
+                adapter.setList(rows);
+            }
+        });
+
     }
 }

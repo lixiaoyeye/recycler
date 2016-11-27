@@ -85,7 +85,7 @@ public class EntruckerAddActivity extends BaseActivity {
 
     private void initView() {
 
-        listView = (ListView) findViewById(R.id.transferadd_listview);
+        listView = (ListView) findViewById(R.id.entruckeradd_listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -137,7 +137,7 @@ public class EntruckerAddActivity extends BaseActivity {
         adapter = new TrashListAdapter(this);
         adapter.setData(rows);
         listView.setAdapter(adapter);
-        EmptyFiller.fill(this,listView,"无数据");
+       // EmptyFiller.fill(this,listView,"无数据");
     }
 
 

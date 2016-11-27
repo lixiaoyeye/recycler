@@ -37,7 +37,8 @@ public class NetUtil {
                 .url(getServiceUrl(action))
                 .post(requestBody)
                 .build();
-        Log.e("request",getServiceUrl(action));
+
+        Log.e("request",getServiceUrl(action)+" - "+requestBody.toString());
         return request;
     }
 }
