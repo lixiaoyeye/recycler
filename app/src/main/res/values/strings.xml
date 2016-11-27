@@ -10,6 +10,7 @@
     <string name="rubbish_incar">垃圾装车</string>
     <string name="data_sync">同步数据</string>
     <string name="data_query">查询</string>
+    <string name="data_stat">统计</string>
 
     <string name="dialog_msg_laoding">正在加载数据</string>
     <string name="netnotavaliable">无法连接到网络</string>

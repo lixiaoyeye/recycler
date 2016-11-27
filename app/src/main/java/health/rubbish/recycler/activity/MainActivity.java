@@ -36,6 +36,7 @@ import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
 import health.rubbish.recycler.widget.BottomPopupItemClickListener;
 import health.rubbish.recycler.widget.CenterGridPopupWindow;
+import health.rubbish.recycler.widget.ExpandGridView;
 import health.rubbish.recycler.widget.HeaderLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,7 +49,7 @@ import okhttp3.Response;
  * 主功能界面
  */
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
-    GridView gridView;
+    ExpandGridView gridView;
     private MainModuleAdapter adapter;
     private boolean autoupdate = true;
 
@@ -62,8 +63,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         apkAutoUpdate();
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showTitle(R.string.app_name);
-        gridView = (GridView) findViewById(R.id.module_gridview);
-        adapter = new MainModuleAdapter();
+        gridView = (ExpandGridView) findViewById(R.id.module_gridview);
+        adapter = new MainModuleAdapter(this);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
     }
