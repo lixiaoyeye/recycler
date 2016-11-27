@@ -41,4 +41,18 @@ public class TrashItem implements Serializable{
     public String driver;            //司机姓名
     public String driverphone;            //司机电话
 
+    public String getStatusNam(){
+        if ("0".equals(status))
+            return "新收集";
+        else if ("1".equals(status))
+            return "已上传";
+        else if ("2".equals(status))
+            return "已下载";
+        else if ("3".equals(status))
+            return "已转储";
+        else if ("4".equals(status))
+            return "已装车";
+        return "";
+    }
+
 }

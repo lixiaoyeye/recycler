@@ -12,7 +12,6 @@ import java.util.List;
 import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.entity.TrashItem;
-import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 
 /**
@@ -38,7 +37,7 @@ public class TrashDao {
     public List<TrashItem> getAllTrashToday() {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -49,7 +48,7 @@ public class TrashDao {
     public List<TrashItem> getAllTransferedTrashToday() {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and ( status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, Constant.Status.ENTRUCKER}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -60,7 +59,7 @@ public class TrashDao {
     public List<TrashItem> getAllUnTransferTrashTodayByCan(String trashcancode) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and  status = ? and trashcancode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.DOWNLOAD, trashcancode}, null, null, " date asc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and trashcancode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.DOWNLOAD, trashcancode}, null, null, " date asc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -71,27 +70,28 @@ public class TrashDao {
     public List<TrashItem> getAllEntruckeredTrashToday() {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and status = ? ", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and status = ? ", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
         return result;
     }
+
     //根据桶号获取待装车垃圾信息
     public List<TrashItem> getAllUnEntruckerTrashTodayByCan(String dustybincode) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null,  "date = ? and  status = ? and dustybincode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, dustybincode}, null, null, " date asc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and dustybincode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, dustybincode}, null, null, " date asc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
         return result;
     }
+
     //当前垃圾信息入库
-    public  void setAllTrash(List<TrashItem> trashItems) {
+    public void setAllTrash(List<TrashItem> trashItems) {
         deleteOldTrash(-7);
-        for (TrashItem item:trashItems)
-        {
+        for (TrashItem item : trashItems) {
             setTrash(item);
         }
     }
@@ -138,7 +138,7 @@ public class TrashDao {
     public String getIdByTrash(TrashItem item) {
         String result = "";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "trashcode = ? and date = ?", new String[]{item.trashcode,DateUtil.getDateString()}, null, null, null);
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "trashcode = ? and date = ?", new String[]{item.trashcode, DateUtil.getDateString()}, null, null, null);
         if (cursor.moveToNext()) {
             result = cursor.getString(cursor.getColumnIndex("id"));
         }
@@ -164,8 +164,7 @@ public class TrashDao {
         db.updateWithOnConflict(DbHelper.TRASH_TABLE, getContentValues(item), "id = ?", new String[]{id}, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    private ContentValues getContentValues(TrashItem item)
-    {
+    private ContentValues getContentValues(TrashItem item) {
         ContentValues values = new ContentValues();
         values.put("date", DateUtil.getDateString());
         values.put("trashcode", item.trashcode);
@@ -204,19 +203,36 @@ public class TrashDao {
         return values;
     }
 
-    public void deleteAllTrash()
-    {
+    public void deleteAllTrash() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.delete(DbHelper.TRASH_TABLE,null,null);
+        db.delete(DbHelper.TRASH_TABLE, null, null);
     }
 
     //删除 dayago 之前的所有数据
-    public void deleteOldTrash(int dayago)
-    {
+    public void deleteOldTrash(int dayago) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH,dayago);
+        calendar.add(Calendar.DAY_OF_MONTH, dayago);
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.delete(DbHelper.TRASH_TABLE,"date < ?",new String[]{DateUtil.getDateString(calendar.getTime())});
+        db.delete(DbHelper.TRASH_TABLE, "date < ?", new String[]{DateUtil.getDateString(calendar.getTime())});
+    }
+
+    /**
+     * 根据垃圾编号，更新本地数据的状态
+     *
+     * @param trasnCode
+     * @param status
+     */
+    //add by xiayanlei
+    public void updateTrashStatus(String trasnCode, String status) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status", status);
+        db.updateWithOnConflict(DbHelper.TRASH_TABLE, values, "trashcode = ? ", new String[]{trasnCode}, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    public void deleteTrash(TrashItem trashItem) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db.delete(DbHelper.TRASH_TABLE, "trashcode = ?", new String[]{trashItem.trashcode});
     }
 }

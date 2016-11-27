@@ -25,7 +25,7 @@ public class NetUtil {
 
     public static String getServiceUrl(String action) {
         SharedPreferences sharedPreferences =  App.ctx.getSharedPreferences("address", Activity.MODE_PRIVATE);
-        String tempIp = sharedPreferences.getString("ip", "218.58.195.26:8081");
+        String tempIp = sharedPreferences.getString("ip", "218.58.195.26");
         String tempPort = sharedPreferences.getString("port", "8081");
         String tempUrl = "http://" + tempIp + ":" + tempPort + "/hlms/waste/" + action;
         return tempUrl;

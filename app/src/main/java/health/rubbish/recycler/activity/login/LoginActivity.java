@@ -14,34 +14,22 @@ import android.widget.ImageView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
-import health.rubbish.recycler.appupdate.ApkDownload;
+import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.MainActivity;
 import health.rubbish.recycler.base.App;
+import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.datebase.CatogeryDao;
 import health.rubbish.recycler.datebase.DepartmentDao;
 import health.rubbish.recycler.entity.CatogeryItem;
 import health.rubbish.recycler.entity.DepartmentItem;
 import health.rubbish.recycler.entity.LoginUser;
-import health.rubbish.recycler.R;
-import health.rubbish.recycler.activity.MainActivity;
-import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.network.request.ParseCallback;
+import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by Lenovo on 2016/11/20.
@@ -54,8 +42,8 @@ public class LoginActivity extends BaseActivity {
     private Button loginView;
 
     private static final String ADDRESS = "address";
-    private String ipStr = "168.168.10.43";
-    private String portStr = "9023";
+    private String ipStr = "218.58.195.26";
+    private String portStr = "8081";
 
     private String userid;
     private String password;
@@ -122,37 +110,19 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void netIdentify() {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("userid", userid)
-                .add("password", password)
-                .build();
         showDialog("正在登陆,请稍等……");
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
-        call.enqueue(new Callback()
-        {
+        new RequestUtil(new ParseCallback<String>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                hideDialog();
-                new AlertDialog.Builder(LoginActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        response.body().byteStream(),"utf-8"));//防止乱码
-                String line;
-                String result="";
-                while ((line = in.readLine()) != null) {
-                    result += line;
-                }
-                Log.e("result","login = "+result);
-                //parseLoginResponse(response.body().string());
+            public void onComplete(String result) {
                 parseLoginResponse(result);
             }
-        });
+
+            @Override
+            public void onError(String error) {
+                hideDialog();
+                new AlertDialog.Builder(LoginActivity.this).setMessage(R.string.client_error).setPositiveButton("确定", null).show();
+            }
+        }).startLogin(userid, password);
     }
 
 

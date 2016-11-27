@@ -1,5 +1,8 @@
 package health.rubbish.recycler.network.request;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -7,7 +10,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import health.rubbish.recycler.activity.collection.WasteItem;
+import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.http.CustomCallback;
 import health.rubbish.recycler.network.http.CustomHttpClient;
 import health.rubbish.recycler.util.Utils;
@@ -22,8 +25,34 @@ public class RequestUtil {
 
     private ParseUtil parseUtil;
 
-    public RequestUtil() {
+    private ParseCallback callback;
+
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg == null)
+                return;
+            switch (msg.what) {
+                case HttpConstants.RESULT_OK:
+                    if (callback != null)
+                        callback.onComplete(msg.obj);
+                    break;
+                case HttpConstants.RESULT_FAIL:
+                    if (callback != null)
+                        callback.onError((String) msg.obj);
+                    break;
+            }
+        }
+    };
+
+    private RequestUtil() {
+
+    }
+
+    public RequestUtil(ParseCallback callback) {
         parseUtil = new ParseUtil();
+        this.callback = callback;
     }
 
     /**
@@ -31,26 +60,30 @@ public class RequestUtil {
      *
      * @param username
      * @param password
-     * @param parser
      */
-    public void startLogin(String username, String password, ParseCallback parser) {
+    public void startLogin(String username, String password) {
         CustomHttpClient client = new CustomHttpClient();
+        client.addParam("userid", String.valueOf(username));
+        client.addParam("password", password);
+        client.executeReq(HttpConstants.LOGIN, new CustomCallback() {
+            @Override
+            public void onResponse(Message message) {
+                if (handler != null)
+                    handler.sendMessage(message);
+            }
+        });
     }
 
-    public void getWasteList(final int page, int limit, final ParseCallback parser) {
+    public void getWasteList(final int page, int limit) {
         CustomHttpClient client = new CustomHttpClient();
         client.addParam("page", String.valueOf(page));
         client.addParam("limit", String.valueOf(limit));
         client.addParam("userid", Utils.getUserId());
-        client.executeReq(UrlConstants.WASTE_LIST, new CustomCallback() {
+        client.executeReq(HttpConstants.WASTE_LIST, new CustomCallback() {
             @Override
-            public void onResponse(String result) {
-                parser.onComplete(result);
-            }
-
-            @Override
-            public void onFailure(String error) {
-                parser.onError(error);
+            public void onResponse(Message message) {
+                if (handler != null)
+                    handler.sendMessage(message);
             }
         });
     }
@@ -59,21 +92,18 @@ public class RequestUtil {
      * 上传垃圾信息
      *
      * @param wasteItems
-     * @param callback
      */
-    public void uploadWaste(List<WasteItem> wasteItems, final ParseCallback callback) {
+    public void uploadWaste(List<TrashItem> wasteItems) {
         CustomHttpClient client = new CustomHttpClient();
         client.addParam("userid", Utils.getUserId());
         client.addParam("datas", revertToJsonString(wasteItems));
         client.executeReq("uploadCollectTrashInfo", new CustomCallback() {
             @Override
-            public void onResponse(String result) {
-                callback.onComplete(parseUtil.parseWasteUploadResp(result));
-            }
-
-            @Override
-            public void onFailure(String error) {
-                callback.onError(error);
+            public void onResponse(Message message) {
+                String result = (String) message.obj;
+                message.obj = parseUtil.parseWasteUploadResp(result);
+                if (handler != null)
+                    handler.sendMessage(message);
             }
         });
     }
@@ -81,24 +111,19 @@ public class RequestUtil {
     /**
      * 下载垃圾信息(数据状态由已上传(1)转为已下载(2))
      *
-     * @param date     日期格式：2016-11-17
-     * @param type     0 全量下载，1 增量下载
-     * @param callback
+     * @param date 日期格式：2016-11-17
+     * @param type 0 全量下载，1 增量下载
      */
-    public void downloadWasteIno(String date, String type, final ParseCallback callback) {
+    public void downloadWasteIno(String date, String type) {
         CustomHttpClient client = new CustomHttpClient();
         client.addParam("userid", Utils.getUserId());
         client.addParam("date", date);
         client.addParam("type", type);
         client.executeReq("downloadMultiTrashInfo", new CustomCallback() {
             @Override
-            public void onResponse(String result) {
-                callback.onComplete(parseUtil.parsDownloadResp(result));
-            }
-
-            @Override
-            public void onFailure(String error) {
-                callback.onError(error);
+            public void onResponse(Message message) {
+                if (handler != null)
+                    handler.sendMessage(message);
             }
         });
     }
@@ -107,20 +132,20 @@ public class RequestUtil {
      * @param wasteItems
      * @return 垃圾信息的json数组
      */
-    private String revertToJsonString(List<WasteItem> wasteItems) {
+    private String revertToJsonString(List<TrashItem> wasteItems) {
         JSONArray array = new JSONArray();
         try {
-            for (WasteItem item : wasteItems) {
+            for (TrashItem item : wasteItems) {
                 JSONObject object = new JSONObject();
-                object.put("collectno", item.wasteId);
-                object.put("rfidno", item.canId);//这个不清楚
-                object.put("trashcancode", item.canId);
-                object.put("trashcode", "");//
-                object.put("colletime", item.dtm);
-                object.put("departareacode", "");//
-                object.put("departcode", item.roomNo);
-                object.put("nurseid", item.nurseId);
-                object.put("categorycode", item.typNo);
+                object.put("collectno", item.trashcode);
+                object.put("rfidno", item.trashcancode);//这个不清楚
+                object.put("trashcancode", item.trashcancode);
+                object.put("trashcode", item.trashcode);//
+                object.put("colletime", item.colletime);
+                object.put("departareacode", item.departareacode);//
+                object.put("departcode", item.departcode);
+                object.put("nurseid", item.nurseid);
+                object.put("categorycode", item.categorycode);
                 object.put("weight", item.weight);
                 array.put(object);
             }

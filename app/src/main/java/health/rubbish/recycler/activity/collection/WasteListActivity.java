@@ -1,16 +1,20 @@
 package health.rubbish.recycler.activity.collection;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.adapter.WasteListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.datebase.TrashDao;
+import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.entity.WasteUploadResp;
 import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
@@ -21,7 +25,7 @@ import health.rubbish.recycler.widget.xlist.XListView;
 /**
  * Created by xiayanlei on 2016/11/23.
  */
-public class WasteListActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class WasteListActivity extends BaseActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, XListView.IXListViewListener {
 
     private XListView wasteListView;
 
@@ -44,8 +48,10 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
             }
         });
         wasteListView = (XListView) findViewById(R.id.waste_listview);
+        wasteListView.setOnItemClickListener(this);
+        wasteListView.setOnItemLongClickListener(this);
         wasteListView.setPullLoadEnable(false);
-        wasteListView.setPullRefreshEnable(true);
+        wasteListView.setPullRefreshEnable(false);
         adapter = new WasteListAdapter();
         wasteListView.setAdapter(adapter);
         Button uploadBtn = (Button) findViewById(R.id.upload_btn);
@@ -66,26 +72,54 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        WasteDetailActivity.launchWasteDetailActivity(this, (WasteItem) adapter.getItem(position - 1));
+        WasteDetailActivity.launchWasteDetailActivity(this, (TrashItem) adapter.getItem(position - 1));
+    }
+
+
+    @Override
+    public void onRefresh() {
+        loadData();
+    }
+
+    @Override
+    public void onLoadMore() {
+
     }
 
     /**
-     * 此处应该是加载本地数据？
+     * 此处应该是加载本地数据
      */
     private void loadData() {
+        final TrashDao trashDao = TrashDao.getInstance();
+        new AsyncTask<Void, Void, List<TrashItem>>() {
 
+            @Override
+            protected List<TrashItem> doInBackground(Void... params) {
+                return trashDao.getAllTrashToday();
+            }
+
+            @Override
+            protected void onPostExecute(List<TrashItem> trashItems) {
+                super.onPostExecute(trashItems);
+                adapter.setWasteItems(trashItems);
+                wasteListView.stopRefresh();
+            }
+        }.execute();
     }
 
-    // TODO: 2016/11/24 ,获取需要上传的数据，并在上传以后更新数据库
+    /**
+     * 上传垃圾信息
+     */
     private void uploadWaste() {
+        List<TrashItem> items = adapter.getNeedUploadTrash();
+        if (items.size() == 0)
+            return;
         showDialog("正在上传数据...");
-        List<WasteItem> items = new ArrayList<>();
-        new RequestUtil().uploadWaste(items, new ParseCallback<List<WasteUploadResp>>() {
+        new RequestUtil(new ParseCallback<List<WasteUploadResp>>() {
 
             @Override
             public void onComplete(List<WasteUploadResp> wasteUploadResps) {
-                hideDialog();
-                // TODO: 2016/11/24 更新本地数据库的垃圾状态
+                updateStatus(wasteUploadResps);
             }
 
             @Override
@@ -93,6 +127,55 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
                 hideDialog();
                 ToastUtil.shortToast(WasteListActivity.this, R.string.client_error);
             }
+        }).uploadWaste(items);
+    }
+
+    /**
+     * 更新垃圾状态
+     *
+     * @param wasteUploadResps
+     */
+    private void updateStatus(final List<WasteUploadResp> wasteUploadResps) {
+        if (wasteUploadResps == null) {
+            hideDialog();
+            ToastUtil.shortToast(this, "上传失败");
+            return;
+        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (wasteUploadResps != null) {
+                    for (WasteUploadResp resp : wasteUploadResps) {
+                        TrashDao.getInstance().updateTrashStatus(resp.trashcode, resp.status);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                hideDialog();
+                ToastUtil.shortToast(WasteListActivity.this, "上传成功");
+                //刷新本地数据
+                loadData();
+            }
+        }.execute();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        final TrashItem item = (TrashItem) adapter.getItem(position - 1);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("是否删除该记录？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TrashDao.getInstance().deleteTrash(item);
+                loadData();
+            }
         });
+        builder.setNegativeButton("取消", null);
+        return true;
     }
 }

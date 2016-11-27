@@ -11,18 +11,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
-import health.rubbish.recycler.activity.collection.WasteItem;
+import health.rubbish.recycler.entity.TrashItem;
 
 /**
  * Created by xiayanlei on 2016/11/24.
  */
 public class WasteListAdapter extends BaseAdapter {
 
-    List<WasteItem> wasteItems = new ArrayList<>();
+    List<TrashItem> wasteItems = new ArrayList<>();
 
-    public void setWasteItems(List<WasteItem> wasteItems) {
+    public void setWasteItems(List<TrashItem> wasteItems) {
         this.wasteItems = wasteItems;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 获取需要上传的垃圾
+     * @return
+     */
+    public List<TrashItem> getNeedUploadTrash() {
+        List<TrashItem> items = new ArrayList<>();
+        if (wasteItems != null){
+            for (TrashItem item : wasteItems) {
+                if ("0".equals(item.status))
+                    items.add(item);
+            }
+        }
+        return items;
     }
 
     @Override
@@ -57,13 +72,13 @@ public class WasteListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        WasteItem item = wasteItems.get(position);
-        holder.wasteIdText.setText(item.wasteId);
-        holder.stateText.setText(item.getStateNam());
-        holder.garbageCanText.setText(item.canId);
-        holder.dtmText.setText(item.dtm);
-        holder.roomText.setText(item.roomNam);
-        holder.typText.setText(item.typNam);
+        TrashItem item = wasteItems.get(position);
+        holder.wasteIdText.setText(item.trashcode);
+        holder.stateText.setText(item.getStatusNam());
+        holder.garbageCanText.setText(item.trashcancode);
+        holder.dtmText.setText(item.colletime);
+        holder.roomText.setText(item.departname);
+        holder.typText.setText(item.categoryname);
         return convertView;
     }
 

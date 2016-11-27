@@ -2,6 +2,7 @@ package health.rubbish.recycler.activity.collection;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import java.util.List;
 
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.datebase.TrashDao;
+import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.entity.WasteUploadResp;
 import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
@@ -24,9 +27,9 @@ public class WasteDetailActivity extends BaseActivity {
 
     private static final String WASTE_ITEM = "wasteItem";
 
-    private WasteItem wasteItem;
+    private TrashItem wasteItem;
 
-    public static void launchWasteDetailActivity(Context context, WasteItem wasteItem) {
+    public static void launchWasteDetailActivity(Context context, TrashItem wasteItem) {
         Intent intent = new Intent(context, WasteDetailActivity.class);
         intent.putExtra(WASTE_ITEM, wasteItem);
         context.startActivity(intent);
@@ -52,29 +55,30 @@ public class WasteDetailActivity extends BaseActivity {
         TextView typeText = (TextView) findViewById(R.id.waste_type_text);
         TextView weightText = (TextView) findViewById(R.id.weight_text);
         TextView boxText = (TextView) findViewById(R.id.box_text);
-        TextView cartext = (TextView) findViewById(R.id.car_text);
+        TextView carText = (TextView) findViewById(R.id.car_text);
         Button uploadBtn = (Button) findViewById(R.id.upload_btn);
 
-        wasteItem = (WasteItem) getIntent().getSerializableExtra(WASTE_ITEM);
+        wasteItem = (TrashItem) getIntent().getSerializableExtra(WASTE_ITEM);
         if (wasteItem == null)
             return;
-        wasteIdText.setText(wasteItem.wasteId);
-        canIdText.setText(wasteItem.canId);
-        collectorText.setText(wasteItem.collectorNam);
-        dtmText.setText(wasteItem.dtm);
-        stateText.setText(wasteItem.getStateNam());
-        roomText.setText(wasteItem.roomNam);
-        nurseText.setText(wasteItem.nurseNam);
-        typeText.setText(wasteItem.typNam);
+        wasteIdText.setText(wasteItem.trashcode);
+        canIdText.setText(wasteItem.trashcancode);
+        collectorText.setText(wasteItem.collector);
+        dtmText.setText(wasteItem.colletime);
+        stateText.setText(wasteItem.getStatusNam());
+        roomText.setText(wasteItem.departcode);
+        nurseText.setText(wasteItem.nurse);
+        typeText.setText(wasteItem.categoryname);
         weightText.setText(wasteItem.weight);
-        boxText.setText(wasteItem.boxId);
-        cartext.setText(wasteItem.carId);
+        boxText.setText(wasteItem.dustybincode);
+        carText.setText(wasteItem.platnumber);
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadWaste();
             }
         });
+        uploadBtn.setVisibility("0".equals(wasteItem.status) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -82,14 +86,14 @@ public class WasteDetailActivity extends BaseActivity {
      */
     private void uploadWaste() {
         showDialog("正在上传数据...");
-        List<WasteItem> items = new ArrayList<>();
+        List<TrashItem> items = new ArrayList<>();
         items.add(wasteItem);
-        new RequestUtil().uploadWaste(items, new ParseCallback<List<WasteUploadResp>>() {
+        new RequestUtil(new ParseCallback<List<WasteUploadResp>>() {
 
             @Override
             public void onComplete(List<WasteUploadResp> wasteUploadResps) {
                 hideDialog();
-                // TODO: 2016/11/24 更新本地数据库的垃圾状态
+                updateStatus(wasteUploadResps);
             }
 
             @Override
@@ -97,7 +101,37 @@ public class WasteDetailActivity extends BaseActivity {
                 hideDialog();
                 ToastUtil.shortToast(WasteDetailActivity.this,R.string.client_error);
             }
-        });
+        }).uploadWaste(items);
     }
+    /**
+     * 更新垃圾状态
+     *
+     * @param wasteUploadResps
+     */
+    private void updateStatus(final List<WasteUploadResp> wasteUploadResps) {
+        if (wasteUploadResps == null) {
+            hideDialog();
+            ToastUtil.shortToast(this, "上传失败");
+            return;
+        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (wasteUploadResps != null) {
+                    for (WasteUploadResp resp : wasteUploadResps) {
+                        TrashDao.getInstance().updateTrashStatus(resp.trashcode, resp.status);
+                    }
+                }
+                return null;
+            }
 
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                hideDialog();
+                ToastUtil.shortToast(WasteDetailActivity.this, "上传成功");
+                finish();
+            }
+        }.execute();
+    }
 }

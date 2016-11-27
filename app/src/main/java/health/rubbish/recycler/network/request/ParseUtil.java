@@ -15,16 +15,21 @@ import health.rubbish.recycler.network.entity.WasteUploadResp;
  */
 public class ParseUtil {
 
+    private static final String RESULT_OK = "success";
+
     /**
      * @param json
      * @return 垃圾上传的响应
      */
     public List<WasteUploadResp> parseWasteUploadResp(String json) {
-        List<WasteUploadResp> resps = new ArrayList<>();
+        List<WasteUploadResp> resps = null;
         try {
             JSONObject object = new JSONObject(json);
-            JSONArray array = object.optJSONArray("rows");
-            //resps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), WasteUploadResp.class);
+            String result = object.optString("result");
+            if (RESULT_OK.equals(result)) {
+                JSONArray array = object.optJSONArray("rows");
+                resps = com.alibaba.fastjson.JSONObject.parseArray(array.toString(), WasteUploadResp.class);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

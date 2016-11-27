@@ -24,7 +24,7 @@ public class Utils {
 
     public static String getUserName(){
         SharedPreferences sp = App.ctx.getSharedPreferences("LoginUser", Activity.MODE_PRIVATE);
-        return sp.getString("userName","");
+        return sp.getString("username","");
     }
 
     public static String getCstName(){
@@ -53,7 +53,7 @@ public class Utils {
      */
     public static String getUserId() {
         SharedPreferences sp = App.ctx.getSharedPreferences("LoginUser", Activity.MODE_PRIVATE);
-        return sp.getString("userId","");
+        return sp.getString("userid","");
     }
     public static String getUserPwd() {
         SharedPreferences sp = App.ctx.getSharedPreferences("UesrInfo", Activity.MODE_PRIVATE);

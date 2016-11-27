@@ -167,6 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_20dp"
                 android:background="@drawable/reatangle_radius_10dp"
+                android:gravity="center"
                 android:padding="10dp"
                 android:text="上    传"
                 android:textColor="@color/white"

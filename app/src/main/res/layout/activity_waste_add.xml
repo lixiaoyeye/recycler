@@ -44,9 +44,23 @@
                     android:layout_width="60dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="@dimen/medium_margin_8dp"
-                    android:enabled="false"
                     android:background="@drawable/button_rfid_normal"
+                    android:enabled="false"
                     android:scaleType="fitXY" />
+            </LinearLayout>
+
+            <View style="@style/normal_diver" />
+
+            <LinearLayout style="@style/waste_add_linearlayout">
+
+                <TextView
+                    style="@style/text_label"
+                    android:text="院区：" />
+
+                <TextView
+                    android:id="@+id/area_text"
+                    style="@style/text_add_content"
+                    android:drawableRight="@drawable/icon_right_arrow2" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -140,6 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_20dp"
                 android:background="@drawable/reatangle_radius_10dp"
+                android:gravity="center"
                 android:padding="10dp"
                 android:text="保存并打印"
                 android:textColor="@color/white"

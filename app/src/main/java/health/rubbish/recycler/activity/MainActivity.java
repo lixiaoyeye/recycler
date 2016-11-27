@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,21 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteListActivity;
 import health.rubbish.recycler.activity.entruck.EntruckerListActivity;
-import health.rubbish.recycler.activity.login.LoginActivity;
-import health.rubbish.recycler.activity.stat.StatCollectActivity;
+import health.rubbish.recycler.activity.query.QueryActivity;
 import health.rubbish.recycler.activity.stat.StatHomeActivity;
 import health.rubbish.recycler.activity.transfer.TransferListActivity;
 import health.rubbish.recycler.adapter.MainModuleAdapter;
 import health.rubbish.recycler.appupdate.AppUpdate;
-import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.base.BaseActivity;
-import health.rubbish.recycler.datebase.CatogeryDao;
-import health.rubbish.recycler.datebase.DepartmentDao;
 import health.rubbish.recycler.datebase.TrashDao;
-import health.rubbish.recycler.entity.CatogeryItem;
-import health.rubbish.recycler.entity.DepartmentItem;
-import health.rubbish.recycler.entity.LoginUser;
 import health.rubbish.recycler.entity.PopupMenuItem;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
@@ -77,6 +70,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         Intent intent = new Intent();
         switch (adapter.getModule(position)) {
             case R.string.rubbish_collection:
+                intent.setClass(MainActivity.this, WasteListActivity.class);
+                startActivity(intent);
                 break;
             case R.string.rubbish_storage:
                 intent.setClass(MainActivity.this, TransferListActivity.class);
@@ -98,6 +93,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 });
                 break;
             case R.string.data_query:
+                intent.setClass(MainActivity.this, QueryActivity.class);
+                startActivity(intent);
                 break;
             case R.string.data_stat:
                 intent.setClass(MainActivity.this, StatHomeActivity.class);
