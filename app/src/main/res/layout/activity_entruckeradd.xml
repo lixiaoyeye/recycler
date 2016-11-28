@@ -41,7 +41,7 @@
             style="@style/style_add_label"
             android:text="司机姓名：" />
 
-        <TextView
+        <EditText
             android:id="@+id/entruckeradd_driver"
             style="@style/style_add_text"
             android:hint="请输入司机姓名" />
@@ -55,9 +55,10 @@
             style="@style/style_add_label"
             android:text="司机电话：" />
 
-        <TextView
+        <EditText
             android:id="@+id/entruckeradd_driverphone"
             style="@style/style_add_text"
+            android:inputType="number"
             android:hint="请输入司机电话" />
     </LinearLayout>
     <View style="@style/style_line_left10dp" />
@@ -67,9 +68,9 @@
             style="@style/style_add_label"
             android:text="垃圾箱号：" />
 
-        <TextView
+        <EditText
             android:id="@+id/entruckeradd_dustybincode"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:hint="请扫描垃圾箱RFID" />
     </LinearLayout>
 

@@ -24,6 +24,7 @@ import health.rubbish.recycler.activity.transfer.TransferListActivity;
 import health.rubbish.recycler.adapter.MainModuleAdapter;
 import health.rubbish.recycler.appupdate.AppUpdate;
 import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.PopupMenuItem;
 import health.rubbish.recycler.entity.TrashItem;
@@ -157,7 +158,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     item = new TrashItem();
 
                     item.trashcode = object.optString("trashcode");
-                    item.status = object.optString("status");
+                   // item.status = object.optString("status");
+
+                    item.status = Constant.Status.TRASFER;
+
                     item.trashcancode = object.optString("trashcancode");
                     item.colletime = object.optString("colletime");
                     item.categorycode = object.optString("categorycode");
@@ -174,14 +178,25 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     item.nurse = object.optString("nurse");
                     item.nursephone = object.optString("nursephone");
 
-                    item.dustybincode = object.optString("dustybincode");
+                    //item.dustybincode = object.optString("dustbincode");
+                    item.dustybincode = "1";
                     item.transfertime = object.optString("transfertime");
                     item.transferid = object.optString("transferid");
                     item.transfer = object.optString("transfer");
                     item.transferphone = object.optString("transferphone");
 
+                    if (item.status.equals(Constant.Status.DOWNLOAD))
+                    {
+                        item.date = DateUtil.getDateString(item.colletime);
+                    }
+                    else if (item.status.equals(Constant.Status.TRASFER))
+                    {
+                        item.date = DateUtil.getDateString(item.transfertime);
+                    }
+
                     rows.add(item);
                 }
+                Log.e("111111","rows.size()"+rows.size());
 
                 runOnUiThread(new Runnable() {
                     @Override

@@ -12,9 +12,9 @@
             style="@style/style_add_label"
             android:text="垃圾桶号：" />
 
-        <TextView
+        <EditText
             android:id="@+id/transferadd_trashcan"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:hint="请扫描垃圾桶RFID" />
     </LinearLayout>
 
@@ -29,6 +29,7 @@
         <TextView
             android:id="@+id/transferadd_dustybin"
             style="@style/style_add_text_arrow"
+            android:text="1"
             android:hint="请扫描垃圾箱RFID" />
     </LinearLayout>
 

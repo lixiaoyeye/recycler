@@ -3,6 +3,7 @@ package health.rubbish.recycler.activity.transfer;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -17,11 +18,17 @@ import java.util.HashSet;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteDetailActivity;
+import health.rubbish.recycler.activity.entruck.EntruckerListActivity;
 import health.rubbish.recycler.adapter.TransferListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.TrashItem;
+import health.rubbish.recycler.network.http.CustomHttpClient;
+import health.rubbish.recycler.network.request.ParseCallback;
+import health.rubbish.recycler.network.request.RequestUtil;
+import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
 import health.rubbish.recycler.util.TrashList2DbAsyncTask;
@@ -63,6 +70,12 @@ public class TransferListActivity extends BaseActivity {
         setData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new TransferListAsyncTask().execute();
+    }
+
     private void initHeaderView() {
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
@@ -81,7 +94,9 @@ public class TransferListActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 2016/11/23  详情
+                Intent intent = new Intent(TransferListActivity.this, WasteDetailActivity.class);
+                intent.putExtra("wasteItem", rows.get(position));
+                startActivity(intent);
             }
         });
 
@@ -96,43 +111,37 @@ public class TransferListActivity extends BaseActivity {
         });
     }
 
-
     private void setData() {
         adapter = new TransferListAdapter(this);
         adapter.setData(rows);
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
-
-        new TransferListAsyncTask().execute();
     }
 
     private void uploadTransferTrashInfo() {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("userid", LoginUtil.getLoginUser().userid)
-                .add("datas", getdatas())
-                .build();
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("uploadTransferTrashInfo",requestBody));
-        call.enqueue(new Callback()
-        {
+        CustomHttpClient client = new CustomHttpClient();
+        client.addParam("userid",  LoginUtil.getLoginUser().userid);
+        client.addParam("datas", getdatas());
+        showDialog("正在上传……");
+        new RequestUtil().sendPost("uploadTransferTrashInfo",client,new ParseCallback<String>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onComplete(String result) {
+                Log.e("123","uploadTransferTrashInfo = "+result);
                 hideDialog();
-                new AlertDialog.Builder(TransferListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                parseResponse(result);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onError(String error) {
                 hideDialog();
-                parseResponse(response.body().string());
-
+                new AlertDialog.Builder(TransferListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
             }
         });
     }
 
     private String  getdatas()
     {
+
         JSONArray jsonArray = new JSONArray();
         try {
             JSONObject object;
@@ -154,6 +163,7 @@ public class TransferListActivity extends BaseActivity {
         {
             e.printStackTrace();
         }
+        Log.e("0000",jsonArray.toString());
         return jsonArray.toString();
     }
 
@@ -175,18 +185,16 @@ public class TransferListActivity extends BaseActivity {
                         if (item!=null )
                         {
                             item.status =Constant.Status.TRASFER;
+                            item.date = DateUtil.getDateString();
                             items.add(item);
                         }
                     }
                 }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        TrashDao.getInstance().setAllTrash(items);
-                    }
-                }).start();
-                adapter.setData(rows);
-                toast("成功");
+                 TrashDao.getInstance().setAllTrash(items);
+                 adapter.setData(rows);
+
+                        toast("成功");
+
             }
             else
             {

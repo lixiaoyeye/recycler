@@ -1,10 +1,14 @@
 package health.rubbish.recycler.activity.entruck;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteDetailActivity;
 import health.rubbish.recycler.adapter.TrashListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
@@ -20,6 +25,8 @@ import health.rubbish.recycler.entity.LoginUser;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
+import health.rubbish.recycler.widget.BottomPopupItemClickListener;
+import health.rubbish.recycler.widget.CenterPopupWindow;
 import health.rubbish.recycler.widget.CustomProgressDialog;
 import health.rubbish.recycler.widget.EmptyFiller;
 import health.rubbish.recycler.widget.HeaderLayout;
@@ -36,7 +43,7 @@ public class EntruckerAddActivity extends BaseActivity {
     TextView entruckeradd_platnumber;
     TextView entruckeradd_driver;
     TextView entruckeradd_driverphone;
-    TextView entruckeradd_dustybincode;
+    EditText entruckeradd_dustybincode;
 
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
@@ -64,12 +71,7 @@ public class EntruckerAddActivity extends BaseActivity {
             public void onClick(View v) {
                 for (TrashItem item:rows)
                 {
-                    entruckeradd_entrucker = (TextView) findViewById(R.id.entruckeradd_entrucker);
-                    entruckeradd_entrucktime = (TextView) findViewById(R.id.entruckeradd_entrucktime);
-                    entruckeradd_platnumber = (TextView) findViewById(R.id.entruckeradd_platnumber);
-                    entruckeradd_driver = (TextView) findViewById(R.id.entruckeradd_driver);
-                    entruckeradd_driverphone = (TextView) findViewById(R.id.entruckeradd_driverphone);
-                    entruckeradd_dustybincode = (TextView) findViewById(R.id.entruckeradd_dustybincode);
+                    item.date = DateUtil.getDateString();
                     item.status = Constant.Status.ENTRUCKERING;
                     item.entruckerid = entruckerid;
                     item.entrucker = entruckeradd_entrucker.getText().toString();
@@ -89,22 +91,48 @@ public class EntruckerAddActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 2016/11/23  详情
+                Intent intent = new Intent(EntruckerAddActivity.this, WasteDetailActivity.class);
+                intent.putExtra("wasteItem", rows.get(position));
+                startActivity(intent);
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+               new CenterPopupWindow().showPopupWindow(EntruckerAddActivity.this, headerLayout, new String[]{"删除"}, new BottomPopupItemClickListener() {
+                   @Override
+                   public void onItemClick(int i) {
+                       new AlertDialog.Builder(EntruckerAddActivity.this).setMessage("删除后本袋垃圾不装车，是否删除？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                                rows.remove(position);
+                               adapter.notifyDataSetChanged();
+                           }
+                       }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+
+                           }
+                       }).create().show();
+                   }
+               });
+                return false;
             }
         });
 
         entruckeradd_entrucker = (TextView) findViewById(R.id.entruckeradd_entrucker);
+        entruckeradd_entrucker.setText(LoginUtil.getLoginUser().username);
         entruckeradd_entrucktime = (TextView) findViewById(R.id.entruckeradd_entrucktime);
         entruckeradd_platnumber = (TextView) findViewById(R.id.entruckeradd_platnumber);
         entruckeradd_driver = (TextView) findViewById(R.id.entruckeradd_driver);
         entruckeradd_driverphone = (TextView) findViewById(R.id.entruckeradd_driverphone);
-        entruckeradd_dustybincode = (TextView) findViewById(R.id.entruckeradd_dustybincode);
-        entruckeradd_dustybincode.setOnClickListener(new View.OnClickListener() {
+        entruckeradd_dustybincode = (EditText) findViewById(R.id.entruckeradd_dustybincode);
+        /*entruckeradd_dustybincode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2016/11/23 扫rfid卡
             }
-        });
+        });*/
 
         entruckeradd_dustybincode.addTextChangedListener(new TextWatcher() {
             @Override

@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -17,11 +18,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.login.LoginActivity;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.entity.StatEntity;
+import health.rubbish.recycler.network.http.CustomHttpClient;
+import health.rubbish.recycler.network.request.ParseCallback;
+import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
+import health.rubbish.recycler.util.Utils;
 import health.rubbish.recycler.widget.HeaderLayout;
 import health.rubbish.recycler.widget.ProgressWheel;
 import okhttp3.Call;
@@ -191,27 +197,26 @@ public class StatHomeActivity extends BaseActivity {
     }
 
     private void loadData() {
-        //创建okHttpClient对象
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("userid", LoginUtil.getLoginUser().userid)
-                .add("date", DateUtil.getDateString())
-                .build();
-        showDialog("正在加载中……");
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("login",requestBody));
-        call.enqueue(new Callback()
-        {
+
+        CustomHttpClient client = new CustomHttpClient();
+        client.addParam("userid",  LoginUtil.getLoginUser().userid);
+        client.addParam("date", DateUtil.getDateString());
+        new RequestUtil().sendPost("statTrashInfo",client,new ParseCallback<String>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                hideDialog();
-                new AlertDialog.Builder(StatHomeActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+            public void onComplete(String result) {
+                Log.e("123","statTrashInfo = "+result);
+                parseResponse(result);
+                hideLoadingView();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                parseResponse(response.body().string());
+            public void onError(String error) {
+                loadingProgress.setVisibility(View.GONE);
+                loadingFailText.setVisibility(View.VISIBLE);
+                new AlertDialog.Builder(StatHomeActivity.this).setMessage(R.string.client_error).setPositiveButton("确定", null).show();
             }
         });
+
     }
 
     private void hideLoadingView() {
@@ -231,16 +236,14 @@ public class StatHomeActivity extends BaseActivity {
         try {
 
             JSONObject jsonObject = new JSONObject(result);
-            JSONObject rowsObject = jsonObject.getJSONObject("rows");
 
-            dayStatEntity = JSON.parseObject(rowsObject.getString("day"), StatEntity.class);
-            weekStatEntity = JSON.parseObject(rowsObject.getString("week"), StatEntity.class);
-            monthStatEntity = JSON.parseObject(rowsObject.getString("month"), StatEntity.class);
+            dayStatEntity = JSON.parseObject(jsonObject.getString("day"), StatEntity.class);
+            weekStatEntity = JSON.parseObject(jsonObject.getString("week"), StatEntity.class);
+            monthStatEntity = JSON.parseObject(jsonObject.getString("month"), StatEntity.class);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    hideDialog();
                     updateUI(dayStatEntity);
                 }
             });

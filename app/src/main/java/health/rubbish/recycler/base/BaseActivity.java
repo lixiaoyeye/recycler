@@ -51,7 +51,8 @@ public abstract class BaseActivity extends FragmentActivity {
         mDialog.setCanceledOnTouchOutside(true);
         if (!TextUtils.isEmpty(msg))
             mDialog.setMessage(msg);
-        if (!isFinishing()) {
+        if (!isFinishing())
+        {
             mDialog.show();
         }
     }
