@@ -220,19 +220,50 @@ public class TrashDao {
     /**
      * 根据垃圾编号，更新本地数据的状态
      *
-     * @param trasnCode
+     * @param trashCode
      * @param status
      */
     //add by xiayanlei
-    public void updateTrashStatus(String trasnCode, String status) {
+    public void updateTrashStatus(String trashCode, String status) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put("status", status);
-        db.updateWithOnConflict(DbHelper.TRASH_TABLE, values, "trashcode = ? ", new String[]{trasnCode}, SQLiteDatabase.CONFLICT_IGNORE);
+        db.updateWithOnConflict(DbHelper.TRASH_TABLE, values, "trashcode = ? ", new String[]{trashCode}, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     public void deleteTrash(TrashItem trashItem) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         db.delete(DbHelper.TRASH_TABLE, "trashcode = ?", new String[]{trashItem.trashcode});
+    }
+
+    /**
+     * 根据选择条件，默认查询当天的数据
+     *
+     * @param departcode
+     * @param nurseid
+     * @param categorycode
+     * @param trashcancode
+     * @param trashcode
+     */
+    public List<TrashItem> queryAllTrash(String departcode, String nurseid, String categorycode, String trashcancode, String trashcode) {
+        List<TrashItem> result = new ArrayList<>();
+        StringBuilder sb = new StringBuilder("select * from ");
+        sb.append(DbHelper.TRASH_TABLE).append(" where date < ? ");
+        if (!TextUtils.isEmpty(departcode))
+            sb.append(" and departcode = " + departcode);
+        if (!TextUtils.isEmpty(nurseid))
+            sb.append(" and nurseid = " + nurseid);
+        if (!TextUtils.isEmpty(categorycode))
+            sb.append(" and categorycode = " + categorycode);
+        if (!TextUtils.isEmpty(trashcancode))
+            sb.append(" and trashcancode = " + trashcancode);
+        if (!TextUtils.isEmpty(trashcode))
+            sb.append(" and trashcode = " + trashcode);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sb.toString(), new String[]{DateUtil.getDateString()});
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
     }
 }

@@ -70,8 +70,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         Intent intent = new Intent();
         switch (adapter.getModule(position)) {
             case R.string.rubbish_collection:
-                intent.setClass(MainActivity.this, WasteListActivity.class);
-                startActivity(intent);
+                WasteListActivity.launchListActivity(this, null, null, null, null, null);
                 break;
             case R.string.rubbish_storage:
                 intent.setClass(MainActivity.this, TransferListActivity.class);
@@ -83,9 +82,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 break;
             case R.string.data_sync:
                 List<PopupMenuItem> popItems = new ArrayList<>();
-                popItems.add(new PopupMenuItem("0",R.drawable.module_default,"全量更新",0));
-                popItems.add(new PopupMenuItem("1",R.drawable.module_default,"增量更新",0));
-                new CenterGridPopupWindow().showPopupWindow(MainActivity.this, gridView,"同步数据",popItems, new BottomPopupItemClickListener() {
+                popItems.add(new PopupMenuItem("0", R.drawable.module_default, "全量更新", 0));
+                popItems.add(new PopupMenuItem("1", R.drawable.module_default, "增量更新", 0));
+                new CenterGridPopupWindow().showPopupWindow(MainActivity.this, gridView, "同步数据", popItems, new BottomPopupItemClickListener() {
                     @Override
                     public void onItemClick(int i) {
                         downloadDatas(i);
@@ -103,13 +102,12 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         }
     }
 
-    private void apkAutoUpdate()
-    {
-        if(autoupdate){
-            AppUpdate appUpdate=new AppUpdate(this,true);
+    private void apkAutoUpdate() {
+        if (autoupdate) {
+            AppUpdate appUpdate = new AppUpdate(this, true);
             appUpdate.update();
         }
-        autoupdate=false;
+        autoupdate = false;
     }
 
     private void downloadDatas(int type) {
@@ -118,12 +116,11 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         RequestBody requestBody = new FormBody.Builder()
                 .add("userid", LoginUtil.getLoginUser().userid)
                 .add("date", DateUtil.getDateString())
-                .add("type",""+type)
+                .add("type", "" + type)
                 .build();
         showDialog("正在同步数据，请稍候……");
-        Call call = mOkHttpClient.newCall(NetUtil.getRequest("downloadMultiTrashInfo",requestBody));
-        call.enqueue(new Callback()
-        {
+        Call call = mOkHttpClient.newCall(NetUtil.getRequest("downloadMultiTrashInfo", requestBody));
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 hideDialog();
@@ -134,30 +131,28 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             public void onResponse(Call call, Response response) throws IOException {
                 //hideDialog();
                 BufferedReader in = new BufferedReader(new InputStreamReader(
-                response.body().byteStream(),"utf-8"));//防止乱码
+                        response.body().byteStream(), "utf-8"));//防止乱码
                 String line;
-                String result="";
+                String result = "";
                 while ((line = in.readLine()) != null) {
                     result += line;
                 }
-                Log.e("result","downloadMultiTrashInfo = "+result);
+                Log.e("result", "downloadMultiTrashInfo = " + result);
                 parseResponse(result);
             }
         });
     }
 
 
-    private void parseResponse(String result)
-    {
+    private void parseResponse(String result) {
         try {
             JSONObject jsonObject = new JSONObject(result);
             String success = jsonObject.getString("result");
             if (success.equals("success")) {
-               final List<TrashItem> rows = new ArrayList<>();
+                final List<TrashItem> rows = new ArrayList<>();
                 JSONArray array = jsonObject.getJSONArray("rows");
                 TrashItem item;
-                for (int i = 0;i<array.length();i++)
-                {
+                for (int i = 0; i < array.length(); i++) {
                     JSONObject object = array.getJSONObject(i);
                     item = new TrashItem();
 
@@ -195,9 +190,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                         hideDialog();
                     }
                 });
-            }
-            else
-            {
+            } else {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -207,9 +200,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 });
 
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

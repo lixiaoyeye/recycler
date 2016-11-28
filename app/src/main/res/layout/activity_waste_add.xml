@@ -41,7 +41,7 @@
 
                 <Button
                     android:id="@+id/rfid_button"
-                    android:layout_width="60dp"
+                    android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="@dimen/medium_margin_8dp"
                     android:background="@drawable/button_rfid_normal"

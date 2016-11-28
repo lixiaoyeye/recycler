@@ -64,7 +64,6 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         nurseText.setOnClickListener(this);
         typeText.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
-        readUtil = new ReadUtil().setReadListener(this);
         initDevice();
         //设置默认值
         formCodeText.setText(Utils.getUserId() + System.currentTimeMillis());
@@ -149,11 +148,13 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
      * 初始化读卡设备
      */
     private void initDevice() {
+        readUtil = new ReadUtil().setReadListener(this);
         if (readUtil.initUfh(this) != 0) {
             ToastUtil.shortToast(this, "打开设备失败");
             rfidBtn.setEnabled(false);
-        } else
+        } else{
             rfidBtn.setEnabled(true);
+        }
     }
 
     /**
@@ -170,7 +171,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         trashItem.collector = collectorText.getText().toString();
         trashItem.collectorid = Utils.getUserId();
         trashItem.colletime = dtmText.getText().toString();
-        trashItem.status = "0";
+        trashItem.status = Constant.Status.NEWCOLLECT;
         TrashDao trashDao = TrashDao.getInstance();
         trashDao.insertTrash(trashItem);
         finish();

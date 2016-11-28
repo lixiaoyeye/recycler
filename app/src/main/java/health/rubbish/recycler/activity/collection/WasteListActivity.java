@@ -1,6 +1,7 @@
 package health.rubbish.recycler.activity.collection;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -31,6 +32,28 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
 
     private WasteListAdapter adapter;
 
+    private static final String DEPART = "depart";
+    private static final String NURSE = "nurse";
+    private static final String CATEGORY = "category";
+    private static final String CANCODE = "canCode";
+    private static final String TRASHCODE = "trashCode";
+
+    private String departcode;
+    private String nurseid;
+    private String categorycode;
+    private String trashcancode;
+    private String trashcode;
+
+    public static void launchListActivity(Context context, String departcode, String nurseid, String categorycode, String trashcancode, String trashcode) {
+        Intent intent = new Intent(context, WasteListActivity.class);
+        intent.putExtra(DEPART, departcode);
+        intent.putExtra(NURSE, nurseid);
+        intent.putExtra(CATEGORY, categorycode);
+        intent.putExtra(CANCODE, trashcancode);
+        intent.putExtra(TRASHCODE, trashcode);
+        context.startActivity(intent);
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_waste_list;
@@ -38,6 +61,7 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
 
     @Override
     protected void init() {
+        initData();
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showTitle("垃圾收集");
         headerLayout.showLeftBackButton();
@@ -61,6 +85,14 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
                 uploadWaste();
             }
         });
+    }
+
+    private void initData() {
+        departcode = getIntent().getStringExtra(DEPART);
+        nurseid = getIntent().getStringExtra(NURSE);
+        categorycode = getIntent().getStringExtra(CATEGORY);
+        trashcancode = getIntent().getStringExtra(CANCODE);
+        trashcode = getIntent().getStringExtra(TRASHCODE);
     }
 
     @Override
@@ -95,7 +127,7 @@ public class WasteListActivity extends BaseActivity implements AdapterView.OnIte
 
             @Override
             protected List<TrashItem> doInBackground(Void... params) {
-                return trashDao.getAllTrashToday();
+                return trashDao.queryAllTrash(departcode, nurseid, categorycode, trashcancode, trashcode);
             }
 
             @Override
