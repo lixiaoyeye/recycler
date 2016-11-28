@@ -170,7 +170,7 @@ public class TrashDao {
 
     private ContentValues getContentValues(TrashItem item) {
         ContentValues values = new ContentValues();
-        values.put("date", DateUtil.getDateString());
+        values.put("date", item.date);
         values.put("trashcode", item.trashcode);
         values.put("status", item.status);
         values.put("trashcancode", item.trashcancode);

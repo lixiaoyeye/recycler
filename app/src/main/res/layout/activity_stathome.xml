@@ -377,8 +377,7 @@
             android:layout_alignBottom="@+id/stathome_rootView"
             android:layout_alignTop="@+id/stathome_rootView"
             android:background="#ccffffff"
-            android:clickable="true"
-            android:visibility="gone">
+            android:clickable="true">
 
             <health.rubbish.recycler.widget.ProgressWheel
                 android:id="@+id/stathome_loading_progress"

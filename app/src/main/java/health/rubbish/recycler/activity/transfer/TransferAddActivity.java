@@ -1,6 +1,7 @@
 package health.rubbish.recycler.activity.transfer;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
@@ -19,14 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteDetailActivity;
+import health.rubbish.recycler.activity.entruck.EntruckerAddActivity;
 import health.rubbish.recycler.adapter.TransferListAdapter;
 import health.rubbish.recycler.adapter.TrashListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.TrashItem;
+import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
+import health.rubbish.recycler.widget.BottomPopupItemClickListener;
+import health.rubbish.recycler.widget.CenterPopupWindow;
 import health.rubbish.recycler.widget.CustomProgressDialog;
 import health.rubbish.recycler.widget.EmptyFiller;
 import health.rubbish.recycler.widget.HeaderLayout;
@@ -74,6 +80,7 @@ public class TransferAddActivity extends BaseActivity {
             public void onClick(View v) {
                 for (TrashItem item:rows)
                 {
+                    item.date = DateUtil.getDateString();
                     item.status = Constant.Status.TRASFERING;
                     item.dustybincode = transferadd_dustybin.getText().toString();
                 }
@@ -88,7 +95,32 @@ public class TransferAddActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 2016/11/23  详情
+                Intent intent = new Intent(TransferAddActivity.this, WasteDetailActivity.class);
+                intent.putExtra("wasteItem", rows.get(position));
+                startActivity(intent);
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                new CenterPopupWindow().showPopupWindow(TransferAddActivity.this, headerLayout, new String[]{"删除"}, new BottomPopupItemClickListener() {
+                    @Override
+                    public void onItemClick(int i) {
+                        new AlertDialog.Builder(TransferAddActivity.this).setMessage("删除后本袋垃圾不转储，是否删除？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                rows.remove(position);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).create().show();
+                    }
+                });
+                return false;
             }
         });
 

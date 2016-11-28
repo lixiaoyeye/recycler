@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteDetailActivity;
 import health.rubbish.recycler.activity.entruck.EntruckerListActivity;
 import health.rubbish.recycler.adapter.TransferListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
@@ -27,6 +28,7 @@ import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.http.CustomHttpClient;
 import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
+import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
 import health.rubbish.recycler.util.TrashList2DbAsyncTask;
@@ -92,7 +94,9 @@ public class TransferListActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 2016/11/23  详情
+                Intent intent = new Intent(TransferListActivity.this, WasteDetailActivity.class);
+                intent.putExtra("wasteItem", rows.get(position));
+                startActivity(intent);
             }
         });
 
@@ -181,6 +185,7 @@ public class TransferListActivity extends BaseActivity {
                         if (item!=null )
                         {
                             item.status =Constant.Status.TRASFER;
+                            item.date = DateUtil.getDateString();
                             items.add(item);
                         }
                     }

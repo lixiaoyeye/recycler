@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteDetailActivity;
 import health.rubbish.recycler.activity.stat.StatCollectActivity;
+import health.rubbish.recycler.activity.transfer.TransferAddActivity;
 import health.rubbish.recycler.activity.transfer.TransferListActivity;
 import health.rubbish.recycler.adapter.EntruckerListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
@@ -27,6 +29,7 @@ import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.http.CustomHttpClient;
 import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
+import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
 import health.rubbish.recycler.widget.CustomProgressDialog;
@@ -91,7 +94,9 @@ public class EntruckerListActivity extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: 2016/11/23  详情
+                Intent intent = new Intent(EntruckerListActivity.this, WasteDetailActivity.class);
+                intent.putExtra("wasteItem", rows.get(position));
+                startActivity(intent);
             }
         });
 
@@ -153,9 +158,9 @@ public class EntruckerListActivity extends BaseActivity {
                     object.put("status", Constant.Status.ENTRUCKER);
                     object.put("platnumber", item.platnumber);
                     object.put("entrucktime", item.entrucktime);
-                    object.put("entruckerid", item.entruckerid);
-                    object.put("entrucker", item.entrucker);
-                    object.put("entruckerphone", item.entruckerphone);
+                    object.put("entruckerid", LoginUtil.getLoginUser().userid);
+                    object.put("entrucker", LoginUtil.getLoginUser().username);
+                    object.put("entruckerphone", "123");
                     object.put("driver", item.driver);
                     object.put("driverphone", item.driverphone);
                     jsonArray.put(object);
@@ -187,6 +192,7 @@ public class EntruckerListActivity extends BaseActivity {
                         if (item!=null )
                         {
                             item.status =Constant.Status.ENTRUCKER;
+                            item.date = DateUtil.getDateString();
                             items.add(item);
                         }
                     }
