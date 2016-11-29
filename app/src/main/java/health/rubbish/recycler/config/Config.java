@@ -1,10 +1,10 @@
 package health.rubbish.recycler.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.entity.Module;
 
 /**
  * Created by xiayanlei on 2016/11/13.
@@ -15,35 +15,34 @@ public class Config {
     public static final String MODULE_NAME = "module_name";
     public static final String MODULE_IMAGE = "module_image";
 
-    public static List<HashMap<String, Integer>> getMainModules(int authority) {
-        List<HashMap<String, Integer>> modules = new ArrayList<>();
+    public static List<Module> getMainModules(int authority) {
+        List<Module> modules = new ArrayList<>();
 
-        HashMap<String, Integer> collect_module = new HashMap<>();
-        collect_module.put(MODULE_NAME, R.string.rubbish_collection);
-        collect_module.put(MODULE_NAME, R.string.rubbish_collection);
-        collect_module.put(MODULE_IMAGE, R.drawable.module_default);
-
-
-        HashMap<String, Integer> storage_module = new HashMap<>();
-        storage_module.put(MODULE_NAME, R.string.rubbish_storage);
-        storage_module.put(MODULE_IMAGE, R.drawable.module_default);
-
-        HashMap<String, Integer> incar_module = new HashMap<>();
-        incar_module.put(MODULE_NAME, R.string.rubbish_incar);
-        incar_module.put(MODULE_IMAGE, R.drawable.module_default);
-
-        HashMap<String, Integer> sync_module = new HashMap<>();
-        sync_module.put(MODULE_NAME, R.string.data_sync);
-        sync_module.put(MODULE_IMAGE, R.drawable.module_default);
-
-        HashMap<String, Integer> query_module = new HashMap<>();
-        query_module.put(MODULE_NAME, R.string.data_query);
-        query_module.put(MODULE_IMAGE, R.drawable.module_default);
+        Module collect_module = new Module();
+        collect_module.name = R.string.rubbish_collection;
+        collect_module.icon = R.drawable.module_default;
 
 
-        HashMap<String, Integer> stat_module = new HashMap<>();
-        stat_module.put(MODULE_NAME, R.string.data_stat);
-        stat_module.put(MODULE_IMAGE, R.drawable.module_default);
+        Module storage_module = new Module();
+        storage_module.name = R.string.rubbish_storage;
+        storage_module.icon = R.drawable.module_default;
+
+        Module incar_module = new Module();
+        incar_module.name = R.string.rubbish_incar;
+        incar_module.icon = R.drawable.module_default;
+
+        Module sync_module = new Module();
+        sync_module.name = R.string.data_sync;
+        sync_module.icon = R.drawable.module_default;
+
+        Module query_module = new Module();
+        query_module.name = R.string.data_query;
+        query_module.icon = R.drawable.module_default;
+
+
+        Module stat_module = new Module();
+        stat_module.name = R.string.data_stat;
+        stat_module.icon = R.drawable.module_default;
 
         switch (authority){
             case -1:

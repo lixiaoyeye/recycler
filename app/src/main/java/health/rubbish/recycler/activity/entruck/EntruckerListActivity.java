@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -13,7 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import health.rubbish.recycler.R;
@@ -47,16 +51,19 @@ import okhttp3.Response;
  * Created by Lenovo on 2016/11/20.
  */
 
-public class EntruckerListActivity extends BaseActivity {
+public class EntruckerListActivity extends BaseActivity  implements View.OnClickListener{
     HeaderLayout headerLayout;
     ListView listView;
     TextView entruckerView;
+    private ImageView date_pageturn_arrow_left;
+    private ImageView date_pageturn_arrow_right;
+    private TextView date_pageturn_date;
 
     EntruckerListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     //List<TrashItem> rows_download = new ArrayList<>();
     CustomProgressDialog progressDialog;
-
+    private Calendar calendar;
 
     @Override
     protected int getLayoutId() {
@@ -65,6 +72,7 @@ public class EntruckerListActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        calendar = Calendar.getInstance();
         initHeaderView();
         initView();
         setData();
@@ -73,7 +81,7 @@ public class EntruckerListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new EntruckerListAsyncTask().execute();
+        updateStartAndEndTime(0);
     }
 
     private void initHeaderView() {
@@ -89,6 +97,11 @@ public class EntruckerListActivity extends BaseActivity {
     }
 
     private void initView() {
+        date_pageturn_arrow_left = (ImageView) findViewById(R.id.date_pageturn_arrow_left);
+        date_pageturn_arrow_right = (ImageView) findViewById(R.id.date_pageturn_arrow_right);
+        date_pageturn_date = (TextView) findViewById(R.id.date_pageturn_date);
+        date_pageturn_arrow_left.setOnClickListener(this);
+        date_pageturn_arrow_right.setOnClickListener(this);
 
         listView = (ListView) findViewById(R.id.entruckerlist_listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,8 +130,25 @@ public class EntruckerListActivity extends BaseActivity {
         adapter.setData(rows);
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
+    }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.date_pageturn_arrow_left:
+                updateStartAndEndTime(-1);
+                break;
+            case R.id.date_pageturn_arrow_right:
+                updateStartAndEndTime(1);
+                break;
+        }
+    }
 
+    private void updateStartAndEndTime(int num) {
+        calendar.add(Calendar.DAY_OF_MONTH, num);
+        Date currentData = calendar.getTime();
+        date_pageturn_date.setText(new SimpleDateFormat("yyyy-MM-dd EEEE").format(currentData));
+        new EntruckerListAsyncTask().execute();
     }
 
     private void uploadEntruckerTrashInfo() {
@@ -230,7 +260,7 @@ public class EntruckerListActivity extends BaseActivity {
     public class EntruckerListAsyncTask extends AsyncTask<Void, Void, List<TrashItem>> {
         @Override
         protected List<TrashItem> doInBackground(Void... params) {
-            return TrashDao.getInstance().getAllEntruckeredTrashToday();
+            return TrashDao.getInstance().getAllEntruckeredTrashToday(DateUtil.getDateString(calendar.getTime()));
         }
 
         @Override

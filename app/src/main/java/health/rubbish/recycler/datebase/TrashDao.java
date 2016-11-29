@@ -35,10 +35,10 @@ public class TrashDao {
     }
 
     //获取当天垃圾信息
-    public List<TrashItem> getAllTrashToday() {
+    public List<TrashItem> getAllTrashToday(String date) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ?", new String[]{date}, null, null, null);
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -46,10 +46,10 @@ public class TrashDao {
     }
 
     //转储获取当天已经转储垃圾信息
-    public List<TrashItem> getAllTransferedTrashToday() {
+    public List<TrashItem> getAllTransferedTrashToday(String date) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? or status = ? )", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER,  Constant.Status.TRASFERING, Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? or status = ? )", new String[]{date, Constant.Status.TRASFER,  Constant.Status.TRASFERING, Constant.Status.ENTRUCKER}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -69,11 +69,12 @@ public class TrashDao {
         return result;
     }
 
+
     //获取当天已装车垃圾信息
-    public List<TrashItem> getAllEntruckeredTrashToday() {
+    public List<TrashItem> getAllEntruckeredTrashToday(String date) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (status = ? or status = ?)", new String[]{DateUtil.getDateString(), Constant.Status.ENTRUCKER, Constant.Status.ENTRUCKERING}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (status = ? or status = ?)", new String[]{date, Constant.Status.ENTRUCKER, Constant.Status.ENTRUCKERING}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -269,5 +270,36 @@ public class TrashDao {
             result.add(getTrash(cursor));
         }
         return result;
+    }
+
+
+
+
+    //上传代办角标
+    public int getAllUnUploadTrash() {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "status = ?", new String[]{ Constant.Status.NEWCOLLECT}, null, null, " date asc");
+        return cursor.getCount();
+    }
+
+
+
+    //转储代办角标
+    public int getAllUnTransferTrash() {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "(status = ? or status = ?)", new String[]{Constant.Status.DOWNLOAD, Constant.Status.TRASFERING}, null, null, " date asc");
+        return cursor.getCount();
+    }
+
+
+
+    //装车代办角标
+    public int getAllUnEntruckTrash() {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "(status = ? or status = ?)", new String[]{Constant.Status.TRASFER, Constant.Status.ENTRUCKERING}, null, null, " date asc");
+        return cursor.getCount();
     }
 }

@@ -16,6 +16,15 @@
             android:id="@+id/transferadd_trashcan"
             style="@style/style_add_text"
             android:hint="请扫描垃圾桶RFID" />
+
+        <Button
+            android:id="@+id/transferadd_trashcan_rfid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/medium_margin_8dp"
+            android:background="@drawable/button_rfid_normal"
+            android:scaleType="fitXY" />
     </LinearLayout>
 
     <View style="@style/style_line_left10dp" />
@@ -26,11 +35,20 @@
             style="@style/style_add_label"
             android:text="垃圾箱号：" />
 
-        <TextView
+        <EditText
             android:id="@+id/transferadd_dustybin"
-            style="@style/style_add_text_arrow"
+            style="@style/style_add_text"
             android:text="1"
             android:hint="请扫描垃圾箱RFID" />
+
+        <Button
+            android:id="@+id/transferadd_dustybin_rfid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/medium_margin_8dp"
+            android:background="@drawable/button_rfid_normal"
+            android:scaleType="fitXY" />
     </LinearLayout>
 
     <RelativeLayout

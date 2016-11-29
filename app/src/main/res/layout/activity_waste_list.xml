@@ -5,6 +5,8 @@
     android:orientation="vertical">
 
     <include layout="@layout/common_header_layout" />
+    
+    <include layout="@layout/date_pageturn_layout"/>
 
     <health.rubbish.recycler.widget.xlist.XListView
         android:id="@+id/waste_listview"

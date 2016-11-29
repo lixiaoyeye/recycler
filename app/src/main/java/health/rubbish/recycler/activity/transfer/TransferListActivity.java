@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -13,7 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,15 +51,19 @@ import okhttp3.Response;
  * Created by Lenovo on 2016/11/20.
  */
 
-public class TransferListActivity extends BaseActivity {
+public class TransferListActivity extends BaseActivity  implements View.OnClickListener{
     HeaderLayout headerLayout;
     ListView listView;
     TextView transferView;
+    private ImageView date_pageturn_arrow_left;
+    private ImageView date_pageturn_arrow_right;
+    private TextView date_pageturn_date;
 
     TransferListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     //List<TrashItem> rows_download = new ArrayList<>();
     CustomProgressDialog progressDialog;
+    Calendar calendar;
 
 
     @Override
@@ -65,6 +73,7 @@ public class TransferListActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        calendar = Calendar.getInstance();
         initHeaderView();
         initView();
         setData();
@@ -73,7 +82,8 @@ public class TransferListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new TransferListAsyncTask().execute();
+        updateStartAndEndTime(0);
+
     }
 
     private void initHeaderView() {
@@ -89,6 +99,11 @@ public class TransferListActivity extends BaseActivity {
     }
 
     private void initView() {
+        date_pageturn_arrow_left = (ImageView) findViewById(R.id.date_pageturn_arrow_left);
+        date_pageturn_arrow_right = (ImageView) findViewById(R.id.date_pageturn_arrow_right);
+        date_pageturn_date = (TextView) findViewById(R.id.date_pageturn_date);
+        date_pageturn_arrow_left.setOnClickListener(this);
+        date_pageturn_arrow_right.setOnClickListener(this);
 
         listView = (ListView) findViewById(R.id.transferlist_listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,6 +131,25 @@ public class TransferListActivity extends BaseActivity {
         adapter.setData(rows);
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.date_pageturn_arrow_left:
+                updateStartAndEndTime(-1);
+                break;
+            case R.id.date_pageturn_arrow_right:
+                updateStartAndEndTime(1);
+                break;
+        }
+    }
+
+    private void updateStartAndEndTime(int num) {
+        calendar.add(Calendar.DAY_OF_MONTH, num);
+        Date currentData = calendar.getTime();
+        date_pageturn_date.setText(new SimpleDateFormat("yyyy-MM-dd EEEE").format(currentData));
+        new TransferListAsyncTask().execute();
     }
 
     private void uploadTransferTrashInfo() {
@@ -186,6 +220,7 @@ public class TransferListActivity extends BaseActivity {
                         {
                             item.status =Constant.Status.TRASFER;
                             item.date = DateUtil.getDateString();
+                            Log.e("000000000",item.trashcode);
                             items.add(item);
                         }
                     }
@@ -222,7 +257,7 @@ public class TransferListActivity extends BaseActivity {
     public class TransferListAsyncTask extends AsyncTask<Void, Void, List<TrashItem>> {
         @Override
         protected List<TrashItem> doInBackground(Void... params) {
-            return TrashDao.getInstance().getAllTransferedTrashToday();
+            return TrashDao.getInstance().getAllTransferedTrashToday(DateUtil.getDateString(calendar.getTime()));
         }
 
         @Override

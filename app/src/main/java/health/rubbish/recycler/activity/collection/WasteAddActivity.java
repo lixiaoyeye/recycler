@@ -1,6 +1,8 @@
 package health.rubbish.recycler.activity.collection;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +27,7 @@ import health.rubbish.recycler.widget.HeaderLayout;
  */
 public class WasteAddActivity extends BaseActivity implements View.OnClickListener, ReadUtil.ReadListener {
     private TextView formCodeText;
-    private TextView garbageCanCodeText;
+    private EditText garbageCanCodeText;
     private TextView areaText;
     private TextView roomText;
     private TextView nurseText;
@@ -48,7 +50,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         headerLayout.showLeftBackButton();
         headerLayout.showTitle("垃圾采集");
         formCodeText = (TextView) findViewById(R.id.form_code_text);
-        garbageCanCodeText = (TextView) findViewById(R.id.garbagecan_code_text);
+        garbageCanCodeText = (EditText) findViewById(R.id.garbagecan_code_text);
         areaText = (TextView) findViewById(R.id.area_text);
         roomText = (TextView) findViewById(R.id.room_text);
         nurseText = (TextView) findViewById(R.id.nurse_text);
@@ -161,6 +163,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
      * 保存垃圾信息,todo 打印功能
      */
     private void saveTrash() {
+        trashItem.date = DateUtil.getDateString();
         trashItem.trashcode = formCodeText.getText().toString();
         trashItem.trashcancode = garbageCanCodeText.getText().toString();
         trashItem.departarea = areaText.getText().toString();

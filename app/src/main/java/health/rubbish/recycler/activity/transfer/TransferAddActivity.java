@@ -8,14 +8,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
+import health.rubbish.recycler.mtuhf.ReadMode;
+import health.rubbish.recycler.mtuhf.ReadUtil;
+import health.rubbish.recycler.mtuhf.Ufh3Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +31,7 @@ import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
 import health.rubbish.recycler.util.NetUtil;
+import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.BottomPopupItemClickListener;
 import health.rubbish.recycler.widget.CenterPopupWindow;
 import health.rubbish.recycler.widget.CustomProgressDialog;
@@ -48,17 +49,19 @@ import okhttp3.Response;
  * Created by Lenovo on 2016/11/20.
  */
 
-public class TransferAddActivity extends BaseActivity {
+public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadListener  {
     HeaderLayout headerLayout;
     ListView listView;
     EditText transferadd_trashcan;
-    TextView transferadd_dustybin;
+    EditText transferadd_dustybin;
+    Button transferadd_trashcan_rfid;
+    Button transferadd_dustybin_rfid;
 
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     CustomProgressDialog progressDialog;
 
-
+    private ReadUtil readUtil;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_transferadd;
@@ -69,6 +72,14 @@ public class TransferAddActivity extends BaseActivity {
         initHeaderView();
         initView();
         setData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isFinishing() && Ufh3Data.isDeviceOpen()) {
+            Ufh3Data.UhfGetData.CloseUhf();
+        }
     }
 
     private void initHeaderView() {
@@ -90,6 +101,7 @@ public class TransferAddActivity extends BaseActivity {
     }
 
     private void initView() {
+
 
         listView = (ListView) findViewById(R.id.transferadd_listview);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,12 +137,6 @@ public class TransferAddActivity extends BaseActivity {
         });
 
         transferadd_trashcan = (EditText) findViewById(R.id.transferadd_trashcan);
-        /*transferadd_trashcan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 2016/11/23 扫rfid卡
-            }
-        });*/
         transferadd_trashcan.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -147,16 +153,68 @@ public class TransferAddActivity extends BaseActivity {
                 new TransferAddListAsyncTask().execute(transferadd_trashcan.getText().toString());
             }
         });
+        transferadd_trashcan_rfid = (Button)findViewById(R.id.transferadd_trashcan_rfid) ;
+        transferadd_trashcan_rfid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type = 1;
+                readUtil.readUfhCard(ReadMode.EPC);
+            }
+        });
 
-        transferadd_dustybin = (TextView) findViewById(R.id.transferadd_dustybin);
+        transferadd_dustybin = (EditText) findViewById(R.id.transferadd_dustybin);
         transferadd_dustybin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2016/11/23 扫rfid卡
+                type = 2;
+                readUtil.readUfhCard(ReadMode.EPC);
             }
         });
+
+        transferadd_dustybin_rfid = (Button)findViewById(R.id.transferadd_dustybin_rfid) ;
+        transferadd_dustybin_rfid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        initDevice();
+    }
+    int type = 0;
+
+    @Override
+    public void onDataReceived(String data) {
+        if (type ==1) {
+            transferadd_trashcan.setText(data);
+        }
+        else if (type == 2)
+        {
+            transferadd_dustybin.setText(data);
+        }
+
     }
 
+    @Override
+    public void onFailure() {
+        ToastUtil.shortToast(this, "读取失败");
+    }
+
+    /**
+     * 初始化读卡设备
+     */
+    private void initDevice() {
+        readUtil = new ReadUtil().setReadListener(this);
+        if (readUtil.initUfh(this) != 0) {
+            ToastUtil.shortToast(this, "打开设备失败");
+            transferadd_dustybin_rfid.setEnabled(false);
+            transferadd_trashcan_rfid.setEnabled(false);
+        } else{
+            transferadd_trashcan_rfid.setEnabled(true);
+            transferadd_dustybin_rfid.setEnabled(true);
+        }
+    }
 
     private void setData() {
         adapter = new TrashListAdapter(this);

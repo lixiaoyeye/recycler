@@ -35,9 +35,10 @@
                     style="@style/text_label"
                     android:text="垃圾桶号：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/garbagecan_code_text"
-                    style="@style/text_add_content" />
+                    style="@style/text_add_content"
+                    android:hint="请扫描垃圾桶RFID"/>
 
                 <Button
                     android:id="@+id/rfid_button"

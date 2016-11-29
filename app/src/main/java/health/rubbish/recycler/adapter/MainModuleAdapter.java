@@ -8,27 +8,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import health.rubbish.recycler.R;
-import health.rubbish.recycler.config.Config;
+import health.rubbish.recycler.entity.Module;
 
 /**
  * Created by xiayanlei on 2016/11/13.
  */
 public class MainModuleAdapter extends BaseAdapter {
 
-    private List<HashMap<String, Integer>> modules = new ArrayList<>();
+    private List<Module> modules = new ArrayList<>();
     private Context context;
     private int screenWidth,screenHeight;
 
-    public MainModuleAdapter(Context context) {
-        modules = Config.getMainModules(-1);
+    public MainModuleAdapter(Context context, List<Module> modules) {
+        this.modules =modules;
         this.context = context;
 
         DisplayMetrics dm = new DisplayMetrics();
@@ -69,14 +67,14 @@ public class MainModuleAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        HashMap<String, Integer> module = modules.get(position);
-        holder.moduleText.setText(module.get(Config.MODULE_NAME));
+        Module module = modules.get(position);
+        holder.moduleText.setText(module.name);
 
-        Drawable drawable = context.getResources().getDrawable(module.get(Config.MODULE_IMAGE));
+        Drawable drawable = context.getResources().getDrawable(module.icon);
         holder.moduleText.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
         holder.moduleText.setCompoundDrawablePadding(10);
         holder.moduletipnum.setVisibility(View.GONE);
-        holder.moduletipnum1.setVisibility(View.GONE);
+        holder.moduletipnum1.setVisibility(module.shortcut == 0?View.GONE:View.VISIBLE);
         ViewGroup.LayoutParams params = holder.modulediverView.getLayoutParams();
         params.height = screenWidth / 3;
         holder.modulediverView.setLayoutParams(params);
@@ -84,7 +82,7 @@ public class MainModuleAdapter extends BaseAdapter {
     }
 
     public Integer getModule(int position) {
-        return modules.get(position).get(Config.MODULE_NAME);
+        return modules.get(position).name;
     }
 
     static class ViewHolder {

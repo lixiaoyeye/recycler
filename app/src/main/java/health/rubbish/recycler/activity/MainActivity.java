@@ -2,6 +2,7 @@ package health.rubbish.recycler.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,8 +25,10 @@ import health.rubbish.recycler.activity.transfer.TransferListActivity;
 import health.rubbish.recycler.adapter.MainModuleAdapter;
 import health.rubbish.recycler.appupdate.AppUpdate;
 import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.config.Config;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
+import health.rubbish.recycler.entity.Module;
 import health.rubbish.recycler.entity.PopupMenuItem;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
@@ -48,7 +51,9 @@ import okhttp3.Response;
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
     ExpandGridView gridView;
     private MainModuleAdapter adapter;
+    private List<Module> modules = new ArrayList<>();
     private boolean autoupdate = true;
+
 
     @Override
     protected int getLayoutId() {
@@ -61,9 +66,16 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showTitle(R.string.app_name);
         gridView = (ExpandGridView) findViewById(R.id.module_gridview);
-        adapter = new MainModuleAdapter(this);
+        modules = Config.getMainModules(-1);
+        adapter = new MainModuleAdapter(this,modules);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new ShortcutAsyncTask().execute();
     }
 
     @Override
@@ -158,9 +170,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     item = new TrashItem();
 
                     item.trashcode = object.optString("trashcode");
-                   // item.status = object.optString("status");
+                    //item.status = object.optString("status");
 
-                    item.status = Constant.Status.TRASFER;
+                     item.status = Constant.Status.DOWNLOAD;
 
                     item.trashcancode = object.optString("trashcancode");
                     item.colletime = object.optString("colletime");
@@ -178,8 +190,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     item.nurse = object.optString("nurse");
                     item.nursephone = object.optString("nursephone");
 
-                    //item.dustybincode = object.optString("dustbincode");
-                    item.dustybincode = "1";
+                    item.dustybincode = object.optString("dustbincode");
+                    //item.dustybincode = "1";
                     item.transfertime = object.optString("transfertime");
                     item.transferid = object.optString("transferid");
                     item.transfer = object.optString("transfer");
@@ -219,4 +231,38 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             e.printStackTrace();
         }
     }
+
+
+    public class ShortcutAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (Module module :modules)
+            {
+                switch (module.name){
+                    case  R.string.rubbish_collection:
+                        module.shortcut = TrashDao.getInstance().getAllUnUploadTrash();
+                        break;
+
+                    case  R.string.rubbish_storage:
+                        module.shortcut = TrashDao.getInstance().getAllUnTransferTrash();
+                        break;
+                    case  R.string.rubbish_incar:
+                        module.shortcut = TrashDao.getInstance().getAllUnEntruckTrash();
+                        break;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,17 +26,20 @@ import health.rubbish.recycler.entity.LoginUser;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.LoginUtil;
+import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.BottomPopupItemClickListener;
 import health.rubbish.recycler.widget.CenterPopupWindow;
 import health.rubbish.recycler.widget.CustomProgressDialog;
 import health.rubbish.recycler.widget.EmptyFiller;
 import health.rubbish.recycler.widget.HeaderLayout;
-
+import health.rubbish.recycler.mtuhf.ReadMode;
+import health.rubbish.recycler.mtuhf.ReadUtil;
+import health.rubbish.recycler.mtuhf.Ufh3Data;
 
 /**
  * Created by Lenovo on 2016/11/20.
  */
-public class EntruckerAddActivity extends BaseActivity {
+public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadListener    {
     HeaderLayout headerLayout;
     ListView listView;
     TextView entruckeradd_entrucker;
@@ -44,12 +48,13 @@ public class EntruckerAddActivity extends BaseActivity {
     TextView entruckeradd_driver;
     TextView entruckeradd_driverphone;
     EditText entruckeradd_dustybincode;
+    Button entruckeradd_dustybincode_rfid;
 
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     CustomProgressDialog progressDialog;
     String entruckerid;
-
+    private ReadUtil readUtil;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_entruckeradd;
@@ -61,7 +66,13 @@ public class EntruckerAddActivity extends BaseActivity {
         initView();
         setData();
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isFinishing() && Ufh3Data.isDeviceOpen()) {
+            Ufh3Data.UhfGetData.CloseUhf();
+        }
+    }
     private void initHeaderView() {
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
@@ -150,9 +161,19 @@ public class EntruckerAddActivity extends BaseActivity {
                 new EntruckerAddListAsyncTask().execute(entruckeradd_dustybincode.getText().toString());
             }
         });
-        
+
+        entruckeradd_dustybincode_rfid = (Button)findViewById(R.id.entruckeradd_dustybincode_rfid) ;
+        entruckeradd_dustybincode_rfid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readUtil.readUfhCard(ReadMode.EPC);
+            }
+        });
+        initDevice();
         initDefaultData();
     }
+
+
 
     private void initDefaultData()
     {
@@ -167,6 +188,8 @@ public class EntruckerAddActivity extends BaseActivity {
         listView.setAdapter(adapter);
        // EmptyFiller.fill(this,listView,"无数据");
     }
+
+
 
 
 
@@ -192,7 +215,29 @@ public class EntruckerAddActivity extends BaseActivity {
             progressDialog.show();
         }
     }
+    @Override
+    public void onDataReceived(String data) {
+        entruckeradd_dustybincode.setText(data);
 
+    }
+
+    @Override
+    public void onFailure() {
+        ToastUtil.shortToast(this, "读取失败");
+    }
+
+    /**
+     * 初始化读卡设备
+     */
+    private void initDevice() {
+        readUtil = new ReadUtil().setReadListener(this);
+        if (readUtil.initUfh(this) != 0) {
+            ToastUtil.shortToast(this, "打开设备失败");
+            entruckeradd_dustybincode_rfid.setEnabled(false);
+        } else{
+            entruckeradd_dustybincode_rfid.setEnabled(true);
+        }
+    }
 
     public class EntruckerAddAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override

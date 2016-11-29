@@ -72,6 +72,15 @@
             android:id="@+id/entruckeradd_dustybincode"
             style="@style/style_add_text"
             android:hint="请扫描垃圾箱RFID" />
+
+        <Button
+            android:id="@+id/entruckeradd_dustybincode_rfid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/medium_margin_8dp"
+            android:background="@drawable/button_rfid_normal"
+            android:scaleType="fitXY" />
     </LinearLayout>
 
     <RelativeLayout
