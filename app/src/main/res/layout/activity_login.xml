@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg"
+    android:background="@drawable/splash_bg"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin">
@@ -22,17 +22,29 @@
             android:src="@drawable/info"/>
     </RelativeLayout>
 
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center_horizontal"
+        android:clickable="true"
+        android:src="@drawable/icon"/>
+
     <EditText
         android:id="@+id/username_edittext"
         android:layout_width="match_parent"
         android:layout_height="@dimen/edittext_height_42dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@null"
         android:hint="@string/username_input_hint"
         android:lines="1"
-        android:textColor="@android:color/white"
+        android:textColor="@color/black"
         android:textColorHint="@color/base_color_text_gray"
-        android:drawableLeft="@drawable/l2"
+        android:drawableLeft="@drawable/login_icon_account"
         android:drawablePadding="10dp"
         android:textSize="18sp" />
 
@@ -43,13 +55,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/edittext_height_42dp"
         android:layout_marginTop="@dimen/widget_vertical_margin_12dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@null"
         android:hint="@string/password_input_hint"
         android:inputType="textPassword"
-        android:drawableLeft="@drawable/l1"
+        android:drawableLeft="@drawable/login_icon_password"
         android:drawablePadding="10dp"
         android:lines="1"
-        android:textColor="@android:color/white"
+        android:textColor="@color/black"
         android:textColorHint="@color/base_color_text_gray"
         android:textSize="18sp" />
 
@@ -60,6 +74,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height_42dp"
         android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/reatangle_radius_10dp"
         android:gravity="center"
         android:text="@string/login"

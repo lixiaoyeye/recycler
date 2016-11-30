@@ -20,6 +20,7 @@ import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.util.Utils;
 import health.rubbish.recycler.widget.HeaderLayout;
+import health.rubbish.recycler.widget.jqprinter.ui.PrintHomeActivity;
 
 /**
  * Created by xiayanlei on 2016/11/23.
@@ -176,7 +177,11 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         trashItem.colletime = dtmText.getText().toString();
         trashItem.status = Constant.Status.NEWCOLLECT;
         TrashDao trashDao = TrashDao.getInstance();
-        trashDao.insertTrash(trashItem);
-        finish();
+        trashDao.setTrash(trashItem);
+
+        Intent intent = new Intent(this, PrintHomeActivity.class);
+        intent.putExtra("TrashItem",trashItem);
+        startActivity(intent);
+
     }
 }

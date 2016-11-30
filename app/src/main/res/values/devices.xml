@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+   
+    <string-array name="devices_name">
+        <item>VMP02</item>
+        <item>VMP02_P</item>
+        <item>JLP351</item>
+        <item>JLP351_IC</item>
+        <item>ULT113x</item>
+        <item>ULT1131_IC</item>
+        <item>EXP341</item>
+    </string-array>
+    <string-array name="devices_value">
+        <item>VMP02</item>
+        <item>VMP02_P</item>
+        <item>JLP351</item>
+        <item>JLP351_IC</item>
+        <item>ULT113x</item>
+        <item>ULT1131_IC</item>
+         <item>EXP341</item>
+    </string-array>
+
+</resources>

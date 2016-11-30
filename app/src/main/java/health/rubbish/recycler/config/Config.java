@@ -20,29 +20,29 @@ public class Config {
 
         Module collect_module = new Module();
         collect_module.name = R.string.rubbish_collection;
-        collect_module.icon = R.drawable.module_default;
+        collect_module.icon = R.drawable.module_collect;
 
 
         Module storage_module = new Module();
         storage_module.name = R.string.rubbish_storage;
-        storage_module.icon = R.drawable.module_default;
+        storage_module.icon = R.drawable.module_transfer;
 
         Module incar_module = new Module();
         incar_module.name = R.string.rubbish_incar;
-        incar_module.icon = R.drawable.module_default;
+        incar_module.icon = R.drawable.module_entruck;
 
         Module sync_module = new Module();
         sync_module.name = R.string.data_sync;
-        sync_module.icon = R.drawable.module_default;
+        sync_module.icon = R.drawable.module_asyc;
 
         Module query_module = new Module();
         query_module.name = R.string.data_query;
-        query_module.icon = R.drawable.module_default;
+        query_module.icon = R.drawable.module_search;
 
 
         Module stat_module = new Module();
         stat_module.name = R.string.data_stat;
-        stat_module.icon = R.drawable.module_default;
+        stat_module.icon = R.drawable.module_stat;
 
         switch (authority){
             case -1:
