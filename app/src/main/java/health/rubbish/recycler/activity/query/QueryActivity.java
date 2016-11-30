@@ -15,6 +15,7 @@ import health.rubbish.recycler.mtuhf.ReadUtil;
 import health.rubbish.recycler.mtuhf.Ufh3Data;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.HeaderLayout;
+import health.rubbish.recycler.widget.zxing.activity.CaptureActivity;
 
 /**
  * Created by xiayanlei on 2016/11/27.
@@ -105,6 +106,8 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                 readUtil.readUfhCard(ReadMode.EPC);
                 break;
             case R.id.qrscan_button:
+                intent.setClass(this, CaptureActivity.class);
+                startActivityForResult(intent, Constant.QR_CODE);
                 break;
             case R.id.search_btn:
                 turnToActivity();
@@ -127,6 +130,8 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
             } else if (Constant.Reference.CATEGORY == requestCode) {
                 categoryText.setText(value);
                 categorycode = key;
+            } else if (Constant.QR_CODE == requestCode) {
+                garbagePkgText.setText(getIntent().getStringExtra("strBarcode"));
             }
         }
     }

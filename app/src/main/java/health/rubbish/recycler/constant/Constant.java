@@ -5,6 +5,7 @@ package health.rubbish.recycler.constant;
  */
 
 public class Constant {
+    public static final int QR_CODE = 200;
     public static class File {
         public static final String DOWNLOADDIR = "recycler";
         public static final String CACHEDIR = "cache";

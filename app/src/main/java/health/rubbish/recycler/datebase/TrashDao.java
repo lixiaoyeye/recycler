@@ -253,7 +253,7 @@ public class TrashDao {
     public List<TrashItem> queryAllTrash(String departcode, String nurseid, String categorycode, String trashcancode, String trashcode) {
         List<TrashItem> result = new ArrayList<>();
         StringBuilder sb = new StringBuilder("select * from ");
-        sb.append(DbHelper.TRASH_TABLE).append(" where date < ? ");
+        sb.append(DbHelper.TRASH_TABLE).append(" where date <= ? ");
         if (!TextUtils.isEmpty(departcode))
             sb.append(" and departcode = " + departcode);
         if (!TextUtils.isEmpty(nurseid))
