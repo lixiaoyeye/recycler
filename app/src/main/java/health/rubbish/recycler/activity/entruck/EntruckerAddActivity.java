@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -171,6 +172,8 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         });
         initDevice();
         initDefaultData();
+
+        entruckeradd_dustybincode.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -85,6 +86,9 @@ public class LoginActivity extends BaseActivity {
                 login();
             }
         });
+
+        userNameView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+        passwordView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     private void login() {

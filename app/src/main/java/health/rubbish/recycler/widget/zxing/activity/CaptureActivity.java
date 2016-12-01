@@ -9,12 +9,12 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.widget.TextView;
-
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -29,10 +29,7 @@ import health.rubbish.recycler.widget.zxing.decoding.CaptureActivityHandler;
 import health.rubbish.recycler.widget.zxing.decoding.InactivityTimer;
 import health.rubbish.recycler.widget.zxing.view.ViewfinderView;
 
-/**
- * Initial the camera
- * @author guolin
- */
+
 public class CaptureActivity extends Activity implements Callback {
 
     private CaptureActivityHandler handler;
@@ -40,28 +37,24 @@ public class CaptureActivity extends Activity implements Callback {
     private boolean hasSurface;
     private Vector<BarcodeFormat> decodeFormats;
     private String characterSet;
+    private TextView txtResult;
     private InactivityTimer inactivityTimer;
     private MediaPlayer mediaPlayer;
     private boolean playBeep;
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
-    TextView txtResult;
 
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
-        CameraManager.init(getApplication());
 
+        CameraManager.init(getApplication());
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         txtResult = (TextView) findViewById(R.id.txtResult);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
     }
-
 
     @Override
     protected void onResume() {
@@ -102,31 +95,20 @@ public class CaptureActivity extends Activity implements Callback {
         super.onDestroy();
     }
 
-    /**
-     * Handler scan result
-     *
-     * @param result
-     * @param barcode
-     */
-    public void handleDecode(final Result result, Bitmap barcode) {
+    public void handleDecode(final Result obj, Bitmap barcode) {
         inactivityTimer.onActivity();
         viewfinderView.drawResultBitmap(barcode);
         playBeepSoundAndVibrate();
-        txtResult.setText(result.getText());
-        //销毁
-        onDestroy();
+        txtResult.setText(obj.getBarcodeFormat().toString() + ":"
+                + obj.getText());
         //返回界面值
         Intent mIntent = new Intent();
-        mIntent.putExtra("strBarcode", result.getText());
+        mIntent.putExtra("strBarcode", obj.getText());
         // 设置结果，并进行传送
         setResult(RESULT_OK, mIntent);
         finish();
-
     }
 
-    /**
-     * 连续扫码配置
-     */
     private void restartPreview() {
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -189,9 +171,6 @@ public class CaptureActivity extends Activity implements Callback {
 
     private void initBeepSound() {
         if (playBeep && mediaPlayer == null) {
-            // The volume on STREAM_SYSTEM is not adjustable, and users found it
-            // too loud,
-            // so we now play on the music stream.
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -217,15 +196,12 @@ public class CaptureActivity extends Activity implements Callback {
         if (playBeep && mediaPlayer != null) {
             mediaPlayer.start();
         }
-        /*if (vibrate) {
+        if (vibrate) {
             Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
             vibrator.vibrate(VIBRATE_DURATION);
-        }*/
+        }
     }
 
-    /**
-     * When the beep has finished playing, rewind to queue up another one.
-     */
     private final OnCompletionListener beepListener = new OnCompletionListener() {
         public void onCompletion(MediaPlayer mediaPlayer) {
             mediaPlayer.seekTo(0);
@@ -240,8 +216,6 @@ public class CaptureActivity extends Activity implements Callback {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
 
 
 }

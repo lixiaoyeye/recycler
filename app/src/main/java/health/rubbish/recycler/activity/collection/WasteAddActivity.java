@@ -2,6 +2,7 @@ package health.rubbish.recycler.activity.collection;
 
 import android.content.Intent;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -72,6 +73,10 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         formCodeText.setText(Utils.getUserId() + System.currentTimeMillis());
         collectorText.setText(Utils.getUserName());
         dtmText.setText(DateUtil.getTimeString());
+
+
+        garbageCanCodeText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+        weightText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     @Override

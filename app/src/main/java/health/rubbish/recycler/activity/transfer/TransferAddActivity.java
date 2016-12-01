@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,6 +61,7 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     CustomProgressDialog progressDialog;
+    int type = 0;
 
     private ReadUtil readUtil;
     @Override
@@ -181,8 +183,11 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
         });
 
         initDevice();
+
+        transferadd_trashcan.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+        transferadd_dustybin.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
-    int type = 0;
+
 
     @Override
     public void onDataReceived(String data) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">医疗垃圾回收</string>
+    <string name="app_name">医废管理</string>
     <string name="action_settings">Settings</string>
     <string name="username_input_hint">请输入用户名</string>
     <string name="password_input_hint">请输入密码</string>

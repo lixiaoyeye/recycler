@@ -3,6 +3,7 @@ package health.rubbish.recycler.activity.login;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 
@@ -56,6 +57,9 @@ public class SetIpActivity extends BaseActivity {
         ip = (ClearEditText) findViewById(R.id.get_ip);
         port = (ClearEditText) findViewById(R.id.get_port);
         save = (Button) findViewById(R.id.btn_conserve);
+
+        ip.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+        port.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     //初始化两个clearEdittext的显示
