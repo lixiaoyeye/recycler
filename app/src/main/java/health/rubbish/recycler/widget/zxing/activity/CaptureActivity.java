@@ -97,7 +97,7 @@ public class CaptureActivity extends Activity implements Callback {
 
     public void handleDecode(final Result obj, Bitmap barcode) {
         inactivityTimer.onActivity();
-        viewfinderView.drawResultBitmap(barcode);
+        //viewfinderView.drawResultBitmap(barcode);
         playBeepSoundAndVibrate();
         txtResult.setText(obj.getBarcodeFormat().toString() + ":"
                 + obj.getText());

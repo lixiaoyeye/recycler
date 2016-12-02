@@ -131,7 +131,7 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                 categoryText.setText(value);
                 categorycode = key;
             } else if (Constant.QR_CODE == requestCode) {
-                garbagePkgText.setText(getIntent().getStringExtra("strBarcode"));
+                garbagePkgText.setText(data.getStringExtra("strBarcode"));
             }
         }
     }
