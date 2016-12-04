@@ -58,8 +58,8 @@ public class SetIpActivity extends BaseActivity {
         port = (ClearEditText) findViewById(R.id.get_port);
         save = (Button) findViewById(R.id.btn_conserve);
 
-        ip.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
-        port.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        ip.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        port.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     //初始化两个clearEdittext的显示

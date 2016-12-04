@@ -87,8 +87,8 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        userNameView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
-        passwordView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        userNameView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        passwordView.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     private void login() {

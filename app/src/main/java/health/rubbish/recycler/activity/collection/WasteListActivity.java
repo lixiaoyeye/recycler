@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -194,8 +195,11 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
      */
     private void uploadWaste() {
         List<TrashItem> items = adapter.getNeedUploadTrash();
-        if (items.size() == 0)
+
+        if (items.size() == 0) {
+            toast("所有数据都已上传");
             return;
+        }
         showDialog("正在上传数据...");
         new RequestUtil(new ParseCallback<List<WasteUploadResp>>() {
 

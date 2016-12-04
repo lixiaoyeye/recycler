@@ -184,8 +184,8 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
 
         initDevice();
 
-        transferadd_trashcan.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
-        transferadd_dustybin.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        transferadd_trashcan.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        transferadd_dustybin.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
 

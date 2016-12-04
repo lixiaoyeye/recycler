@@ -70,13 +70,13 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         saveBtn.setOnClickListener(this);
         initDevice();
         //设置默认值
-        formCodeText.setText(Utils.getUserId() + System.currentTimeMillis());
+        formCodeText.setText(Utils.getUserId() +"-"+ DateUtil.getTimeString().replace("-","").replace(":","").replace(" ","-"));
         collectorText.setText(Utils.getUserName());
         dtmText.setText(DateUtil.getTimeString());
 
 
-        garbageCanCodeText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
-        weightText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        garbageCanCodeText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        weightText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
     @Override

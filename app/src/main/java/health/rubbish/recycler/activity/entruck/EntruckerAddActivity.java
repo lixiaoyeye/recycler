@@ -173,7 +173,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         initDevice();
         initDefaultData();
 
-        entruckeradd_dustybincode.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        entruckeradd_dustybincode.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
 
