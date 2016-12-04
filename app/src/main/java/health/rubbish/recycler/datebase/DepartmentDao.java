@@ -36,19 +36,29 @@ public class DepartmentDao {
     public List<DepartmentItem> getAllDepartmentToday() {
         List<DepartmentItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null,  "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
+        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "date = ?", new String[]{DateUtil.getDateString()}, null, null, null);
         while (cursor.moveToNext()) {
             result.add(getDepartment(cursor));
         }
         return result;
     }
 
+    public DepartmentItem getDepartByCode(String departCode) {
+        List<DepartmentItem> result = getAllDepartmentToday();
+        if (result != null && departCode != null) {
+            for (DepartmentItem item : result) {
+                if (departCode.equals(item.departcode))
+                    return item;
+            }
+        }
+        return null;
+    }
+
     //当天科室信息入库
-    public  void setAllDepartment(List<DepartmentItem> departmentItems) {
+    public void setAllDepartment(List<DepartmentItem> departmentItems) {
         //删除7天前数据
         deleteOldDepartment(-7);
-        for (DepartmentItem item:departmentItems)
-        {
+        for (DepartmentItem item : departmentItems) {
             setDepartment(item);
         }
     }
@@ -69,7 +79,7 @@ public class DepartmentDao {
     public String getIdByDepartment(DepartmentItem item) {
         String result = "";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "departcode = ? and date = ?", new String[]{item.departcode,DateUtil.getDateString()}, null, null, null);
+        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "departcode = ? and date = ?", new String[]{item.departcode, DateUtil.getDateString()}, null, null, null);
         if (cursor.moveToNext()) {
             result = cursor.getString(cursor.getColumnIndex("id"));
         }
@@ -94,9 +104,8 @@ public class DepartmentDao {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         db.updateWithOnConflict(DbHelper.DEPART_TABLE, getContentValues(item), "id = ?", new String[]{id}, SQLiteDatabase.CONFLICT_IGNORE);
     }
-    
-    private ContentValues getContentValues(DepartmentItem item)
-    {
+
+    private ContentValues getContentValues(DepartmentItem item) {
         ContentValues values = new ContentValues();
         values.put("date", DateUtil.getDateString());
         values.put("departcode", item.departcode);
@@ -109,19 +118,17 @@ public class DepartmentDao {
         return values;
     }
 
-    public void deleteAllDepartment()
-    {
+    public void deleteAllDepartment() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.delete(DbHelper.DEPART_TABLE,null,null);
+        db.delete(DbHelper.DEPART_TABLE, null, null);
     }
 
     //删除 dayago 之前的所有数据
-    public void deleteOldDepartment(int dayago)
-    {
+    public void deleteOldDepartment(int dayago) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH,dayago);
-        
+        calendar.add(Calendar.DAY_OF_MONTH, dayago);
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.delete(DbHelper.DEPART_TABLE,"date < ?",new String[]{DateUtil.getDateString(calendar.getTime())});
+        db.delete(DbHelper.DEPART_TABLE, "date < ?", new String[]{DateUtil.getDateString(calendar.getTime())});
     }
 }

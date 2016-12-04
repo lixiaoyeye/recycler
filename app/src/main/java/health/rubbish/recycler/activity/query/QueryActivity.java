@@ -10,6 +10,8 @@ import health.rubbish.recycler.activity.collection.ReferenceActivity;
 import health.rubbish.recycler.activity.collection.WasteListActivity;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
+import health.rubbish.recycler.datebase.DepartmentDao;
+import health.rubbish.recycler.entity.DepartmentItem;
 import health.rubbish.recycler.mtuhf.ReadMode;
 import health.rubbish.recycler.mtuhf.ReadUtil;
 import health.rubbish.recycler.mtuhf.Ufh3Data;
@@ -51,11 +53,13 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         garbageCcText = (TextView) findViewById(R.id.garbage_can_text);
         garbagePkgText = (TextView) findViewById(R.id.garbage_package_text);
         rfidBtn = (Button) findViewById(R.id.rfid_button);
+        Button roomScanBtn = (Button) findViewById(R.id.room_scan_button);
         Button qrscanBtn = (Button) findViewById(R.id.qrscan_button);
         Button searchBtn = (Button) findViewById(R.id.search_btn);
         roomText.setOnClickListener(this);
         nurseText.setOnClickListener(this);
         categoryText.setOnClickListener(this);
+        roomScanBtn.setOnClickListener(this);
         rfidBtn.setOnClickListener(this);
         qrscanBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
@@ -91,6 +95,10 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                 intent.putExtra(Constant.Reference.REFER_TITLE, "科室选择");
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.DEPART);
                 startActivityForResult(intent, Constant.Reference.DEPART);
+                break;
+            case R.id.room_scan_button:
+                intent.setClass(this, CaptureActivity.class);
+                startActivityForResult(intent, Constant.DEPART_SCAN);
                 break;
             case R.id.nurse_text:
                 intent.putExtra(Constant.Reference.REFER_TITLE, "护士选择");
@@ -132,6 +140,14 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                 categorycode = key;
             } else if (Constant.QR_CODE == requestCode) {
                 garbagePkgText.setText(data.getStringExtra("strBarcode"));
+            } else if (Constant.DEPART_SCAN == requestCode) {//修改科室和护士信息
+                DepartmentItem item = DepartmentDao.getInstance().getDepartByCode(data.getStringExtra("strBarcode"));
+                if (item != null) {
+                    roomText.setText(item.departname);
+                    departcode = item.departcode;
+                    nurseText.setText(item.nurse);
+                    nurseid = item.nurseid;
+                }
             }
         }
     }
