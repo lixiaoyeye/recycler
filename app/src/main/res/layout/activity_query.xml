@@ -27,9 +27,16 @@
                 <TextView
                     android:id="@+id/room_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2"
                     android:gravity="center_vertical|right"
                     android:hint="@string/common_select_hint" />
+
+                <Button
+                    android:id="@+id/room_scan_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="@dimen/medium_margin_8dp"
+                    android:background="@drawable/scan"
+                    android:scaleType="fitXY" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />

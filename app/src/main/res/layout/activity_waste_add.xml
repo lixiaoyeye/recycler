@@ -38,7 +38,7 @@
                 <EditText
                     android:id="@+id/garbagecan_code_text"
                     style="@style/text_add_content"
-                    android:hint="请扫描垃圾桶RFID"/>
+                    android:hint="请扫描垃圾桶RFID" />
 
                 <Button
                     android:id="@+id/rfid_button"
@@ -60,7 +60,8 @@
                 <TextView
                     android:id="@+id/area_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2" />
+                    android:drawableRight="@drawable/icon_right_arrow2"
+                    android:hint="@string/force_select_hint" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -74,7 +75,14 @@
                 <TextView
                     android:id="@+id/room_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2" />
+                    android:hint="@string/force_select_hint" />
+
+                <ImageView
+                    android:id="@+id/room_scan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/medium_margin_8dp"
+                    android:src="@drawable/scan" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -88,7 +96,8 @@
                 <TextView
                     android:id="@+id/nurse_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2" />
+                    android:drawableRight="@drawable/icon_right_arrow2"
+                    android:hint="@string/force_select_hint" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -102,7 +111,8 @@
                 <TextView
                     android:id="@+id/waste_type_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2" />
+                    android:drawableRight="@drawable/icon_right_arrow2"
+                    android:hint="@string/force_select_hint" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -117,7 +127,16 @@
                     android:id="@+id/weight_text"
                     style="@style/text_add_content"
                     android:layout_height="36dp"
-                    android:digits=".0123456789" />
+                    android:digits=".0123456789"
+                    android:hint="@string/force_input_hint" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/medium_margin_8dp"
+                    android:text="kg"
+                    android:textColor="@color/text_black"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <View style="@style/normal_diver" />

@@ -24,6 +24,8 @@
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
     <string name="client_error">无法连接到服务器</string>
     <string name="common_select_hint">请选择</string>
+    <string name="force_select_hint">请选择(必填)</string>
+    <string name="force_input_hint">请输入(必填)</string>
 
     <string name="title_activity_enforcement_bill">EnforcementBillActivity</string>
     <string name="title_activity_main_express">MainActivity</string>
