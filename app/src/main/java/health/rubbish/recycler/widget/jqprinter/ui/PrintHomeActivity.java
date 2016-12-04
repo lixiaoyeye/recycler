@@ -417,55 +417,57 @@ public class PrintHomeActivity extends BaseActivity {
 		x = 20;
 		x1 = 100;
 		x2 = 20;
-		x3 = 120;
+		x3 = 140;
 		x4 = 280;
 		x5 = 380;
 
 		int height = 30;
 
-
-		if (!jpl.page.start(0, 0, 576, 560, Page.PAGE_ROTATE.x0))
+		if (!jpl.page.start(0, 0, 676, 504, Page.PAGE_ROTATE.x0))
 			return false;
 
-		y = 5;
+		y = 10;
 
-		if (!jpl.barcode.QRCode(x1, y, 0, Barcode.QRCODE_ECC.LEVEL_M, Barcode.BAR_UNIT.x5, JPL.ROTATE.x0, "http://www.jqsh.com/front/bin/ptdetail.phtml?Part=pro_08&Rcg=1"))
+		if (!jpl.barcode.QRCode(x4+90, y+80, 0, Barcode.QRCODE_ECC.LEVEL_M, Barcode.BAR_UNIT.x7, JPL.ROTATE.x0, trashItem.trashcode))
 			return false;
-		y = y+200;
+		y = y+5;
 
 		/*if (!jpl.text.drawOut(x, y+180, "no:", 18, true, false, false, false, TEXT_ENLARGE.x1, TEXT_ENLARGE.x1, ROTATE.x0))
             return false;
         jpl.text.drawOut(116, y+180, "nostr11111111111111", 16, false, false, false, false, TEXT_ENLARGE.x1, TEXT_ENLARGE.x1, ROTATE.x0);*/
 
-		jpl.text.drawOut(x2, y, "垃圾袋号:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.trashcode, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "垃圾袋号:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.trashcode, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 		y += height;
 
-		jpl.text.drawOut(x2, y, "垃圾桶号:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.trashcancode, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "垃圾桶号:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.trashcancode, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 		y += height;
 
-		jpl.text.drawOut(x2, y, "院　　区:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.departarea, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "院　　区:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.departarea, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 		y += height;
 
-		jpl.text.drawOut(x2, y, "科　　室:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.departname, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-
-		jpl.text.drawOut(x4, y, "护　　士:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x5, y, trashItem.nurse, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "科　　室:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.departname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		y += height;
+		
+		jpl.text.drawOut(x2, y, "护　　士:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.nurse, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 		y += height;
 
-		jpl.text.drawOut(x2, y, "类　　型:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.categoryname, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "类　　型:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.categoryname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		y += height;
+		
+		jpl.text.drawOut(x2, y, "重　　量:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.weight + "  kg", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		y += height;
 
-		jpl.text.drawOut(x4, y, "重　　量:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x5, y, trashItem.weight, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		y += height+20;
-
-		jpl.text.drawOut(x2, y, "日　　期:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x3, y, trashItem.date, 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-		jpl.text.drawOut(x2, y, "签　　字:", 17, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x2, y, "日　　期:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		jpl.text.drawOut(x3, y, trashItem.date, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+		y += height+25;
+		jpl.text.drawOut(x2, y, "签　　字:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 
         /*if (!jpl.graphic.line(x3, y, 575, y, 1))
             return false;*/

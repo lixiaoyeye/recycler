@@ -19,6 +19,7 @@ import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.HeaderLayout;
+import health.rubbish.recycler.widget.jqprinter.ui.PrintHomeActivity;
 
 /**
  * Created by xiayanlei on 2016/11/23.
@@ -75,10 +76,27 @@ public class WasteDetailActivity extends BaseActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadWaste();
+                if ("0".equals(wasteItem.status) ) {
+                    uploadWaste();
+                }
+                else
+                {
+                    Intent intent = new Intent(WasteDetailActivity.this, PrintHomeActivity.class);
+                    intent.putExtra("TrashItem",wasteItem);
+                    startActivity(intent);
+                }
             }
         });
-        uploadBtn.setVisibility("0".equals(wasteItem.status) ? View.VISIBLE : View.GONE);
+        if ("0".equals(wasteItem.status) )
+        {
+            uploadBtn.setText("上  传");
+        }
+        else
+        {
+            uploadBtn.setText("打  印");
+        }
+
+        //uploadBtn.setVisibility("0".equals(wasteItem.status) ? View.VISIBLE : View.GONE);
     }
 
     /**

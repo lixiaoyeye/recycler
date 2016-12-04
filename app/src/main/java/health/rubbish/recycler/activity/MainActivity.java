@@ -227,6 +227,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 });
 
             }
+
+            new ShortcutAsyncTask().execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
