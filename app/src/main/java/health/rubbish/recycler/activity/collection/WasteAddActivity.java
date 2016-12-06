@@ -1,13 +1,16 @@
 package health.rubbish.recycler.activity.collection;
 
 import android.content.Intent;
+import android.haobin.barcode.BarcodeManager;
 import android.os.AsyncTask;
-import android.text.InputType;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,13 +26,12 @@ import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.mtuhf.ReadMode;
 import health.rubbish.recycler.mtuhf.ReadUtil;
 import health.rubbish.recycler.mtuhf.Ufh3Data;
+import health.rubbish.recycler.util.BeepManager;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.util.Utils;
 import health.rubbish.recycler.widget.HeaderLayout;
-import health.rubbish.recycler.widget.jqprinter.printer.cpcl.Text;
 import health.rubbish.recycler.widget.jqprinter.ui.PrintHomeActivity;
-import health.rubbish.recycler.widget.zxing.activity.CaptureActivity;
 
 /**
  * Created by xiayanlei on 2016/11/23.
@@ -39,8 +41,9 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     private TextView formCodeText;
     private EditText garbageCanCodeText;
     private TextView areaText;
-    private TextView roomText;
+    private EditText roomText;
     private TextView nurseText;
+    private TextView room_text_arrow;
     private TextView typeText;
     private EditText weightText;
     private TextView collectorText;
@@ -49,6 +52,10 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     private ReadUtil readUtil;
     private TrashItem trashItem = new TrashItem();
     private List<DepartmentItem> departmentItems = new ArrayList<>();
+
+    private final int Handler_Scan = 2000;
+    private BeepManager beepManager;
+    private BarcodeManager barcodeManager;
 
     @Override
     protected int getLayoutId() {
@@ -63,21 +70,22 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         formCodeText = (TextView) findViewById(R.id.form_code_text);
         garbageCanCodeText = (EditText) findViewById(R.id.garbagecan_code_text);
         areaText = (TextView) findViewById(R.id.area_text);
-        roomText = (TextView) findViewById(R.id.room_text);
+        roomText = (EditText) findViewById(R.id.room_text);
         nurseText = (TextView) findViewById(R.id.nurse_text);
+        room_text_arrow = (TextView) findViewById(R.id.room_text_arrow);
         typeText = (TextView) findViewById(R.id.waste_type_text);
         weightText = (EditText) findViewById(R.id.weight_text);
         collectorText = (TextView) findViewById(R.id.collector_text);
         dtmText = (TextView) findViewById(R.id.dtm_text);
         rfidBtn = (Button) findViewById(R.id.rfid_button);
-        ImageView scanImage = (ImageView) findViewById(R.id.room_scan);
+       // ImageView scanImage = (ImageView) findViewById(R.id.room_scan);
         Button saveBtn = (Button) findViewById(R.id.save_print_btn);
         rfidBtn.setOnClickListener(this);
         areaText.setOnClickListener(this);
-        roomText.setOnClickListener(this);
         nurseText.setOnClickListener(this);
+        room_text_arrow.setOnClickListener(this);
         typeText.setOnClickListener(this);
-        scanImage.setOnClickListener(this);
+       // scanImage.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
         initDevice();
         //设置默认值
@@ -87,9 +95,51 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         dtmText.setText(DateUtil.getTimeString());
         initData();
 
-        garbageCanCodeText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
-        weightText.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+        garbageCanCodeText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (null != barcodeManager) {
+                    barcodeManager.Barcode_Close();
+                    barcodeManager.Barcode_Stop();
+                    barcodeManager=null;
+                }
+                readUtil = new ReadUtil().setReadListener(WasteAddActivity.this);
+                if (keyCode == KeyEvent.KEYCODE_F12) {
+                    readUtil.readUfhCard(ReadMode.EPC);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+       /* roomText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (barcodeManager == null) {
+                    barcodeManager = BarcodeManager.getInstance();
+                }
+                barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.e("000000",""+keyCode);
+                if (keyCode == KeyEvent.KEYCODE_F12) {
+                    barHandler.sendEmptyMessage(Handler_Scan);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });*/
+
+        beepManager = new BeepManager(this, true, false);
     }
+
+
+
 
     /**
      * 初始化默认的科室、院区和护士
@@ -128,6 +178,13 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+
+        super.onResume();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, ReferenceActivity.class);
         switch (v.getId()) {
@@ -144,10 +201,10 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.DEPART);
                 startActivityForResult(intent, Constant.Reference.DEPART);
                 break;
-            case R.id.room_scan:
+            /*case R.id.room_scan:
                 intent.setClass(this, CaptureActivity.class);
                 startActivityForResult(intent, Constant.DEPART_SCAN);
-                break;
+                break;*/
             case R.id.nurse_text:
                 intent.putExtra(Constant.Reference.REFER_TITLE, "护士选择");
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.NURSE);
@@ -163,6 +220,58 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                 break;
         }
     }
+
+
+    private long nowTime = 0;
+    private long lastTime = 0;
+    private String codeId;
+    private Handler barHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case Handler_SHOW_RESULT:
+                    if (null != codeBuffer) {
+                        String str = new String(codeBuffer);
+                        roomText.setText(str);
+                        beepManager.play();
+                        barcodeManager.Barcode_Stop();
+                    }
+                    break;
+                case Handler_Scan:
+                    nowTime = System.currentTimeMillis();
+                    barcodeManager.Barcode_Stop();
+                    // 按键时间不低于200ms
+                    if (nowTime - lastTime > 200) {
+                        System.out.println("scan(0)");
+                        if (null != barcodeManager) {
+                            barcodeManager.Barcode_Start();
+                        }
+                        lastTime = nowTime;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        };
+    };
+    private final int Handler_SHOW_RESULT = 1999;
+    private byte[] codeBuffer;
+    BarcodeManager.Callback dataReceived = new BarcodeManager.Callback() {
+
+        @Override
+        public void Barcode_Read(byte[] buffer, String codeId, int errorCode) {
+            // TODO Auto-generated method stub
+            if (null != buffer) {
+                codeBuffer = buffer;
+                WasteAddActivity.this.codeId = codeId;
+                Message msg = new Message();
+                msg.what = Handler_SHOW_RESULT;
+                barHandler.sendMessage(msg);
+                barcodeManager.Barcode_Stop();
+            }
+        }
+    };
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -254,7 +363,6 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         Intent intent = new Intent(this, PrintHomeActivity.class);
         intent.putExtra("TrashItem", trashItem);
         startActivity(intent);
-
     }
 
     /**

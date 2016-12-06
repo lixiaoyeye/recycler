@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -48,8 +49,8 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     TextView entruckeradd_platnumber;
     TextView entruckeradd_driver;
     TextView entruckeradd_driverphone;
-    EditText entruckeradd_dustybincode;
-    Button entruckeradd_dustybincode_rfid;
+    EditText entruckeradd_trashcancode;
+    Button entruckeradd_trashcancode_rfid;
 
     TrashListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
@@ -138,15 +139,17 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         entruckeradd_platnumber = (TextView) findViewById(R.id.entruckeradd_platnumber);
         entruckeradd_driver = (TextView) findViewById(R.id.entruckeradd_driver);
         entruckeradd_driverphone = (TextView) findViewById(R.id.entruckeradd_driverphone);
-        entruckeradd_dustybincode = (EditText) findViewById(R.id.entruckeradd_dustybincode);
-        /*entruckeradd_dustybincode.setOnClickListener(new View.OnClickListener() {
+        entruckeradd_trashcancode = (EditText) findViewById(R.id.entruckeradd_trashcancode);
+        /*entruckeradd_trashcancode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: 2016/11/23 扫rfid卡
             }
         });*/
 
-        entruckeradd_dustybincode.addTextChangedListener(new TextWatcher() {
+
+
+        entruckeradd_trashcancode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -159,21 +162,33 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
 
             @Override
             public void afterTextChanged(Editable s) {
-                new EntruckerAddListAsyncTask().execute(entruckeradd_dustybincode.getText().toString());
+                new EntruckerAddListAsyncTask().execute(entruckeradd_trashcancode.getText().toString());
             }
         });
 
-        entruckeradd_dustybincode_rfid = (Button)findViewById(R.id.entruckeradd_dustybincode_rfid) ;
-        entruckeradd_dustybincode_rfid.setOnClickListener(new View.OnClickListener() {
+        entruckeradd_trashcancode_rfid = (Button)findViewById(R.id.entruckeradd_trashcancode_rfid) ;
+        entruckeradd_trashcancode_rfid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 readUtil.readUfhCard(ReadMode.EPC);
             }
         });
+
         initDevice();
+        entruckeradd_trashcancode.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_F12) {
+                    readUtil.readUfhCard(ReadMode.EPC);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
         initDefaultData();
 
-//        entruckeradd_dustybincode.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
+//        entruckeradd_trashcancode.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
     }
 
 
@@ -220,7 +235,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     }
     @Override
     public void onDataReceived(String data) {
-        entruckeradd_dustybincode.setText(data);
+        entruckeradd_trashcancode.setText(data);
 
     }
 
@@ -236,9 +251,9 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         readUtil = new ReadUtil().setReadListener(this);
         if (readUtil.initUfh(this) != 0) {
             ToastUtil.shortToast(this, "打开设备失败");
-            entruckeradd_dustybincode_rfid.setEnabled(false);
+            entruckeradd_trashcancode_rfid.setEnabled(false);
         } else{
-            entruckeradd_dustybincode_rfid.setEnabled(true);
+            entruckeradd_trashcancode_rfid.setEnabled(true);
         }
     }
 

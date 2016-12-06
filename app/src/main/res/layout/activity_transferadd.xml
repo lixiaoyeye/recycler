@@ -24,12 +24,14 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/medium_margin_8dp"
             android:background="@drawable/button_rfid_normal"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <View style="@style/style_line_left10dp" />
 
-    <LinearLayout style="@style/style_add_LinearLayout">
+    <LinearLayout style="@style/style_add_LinearLayout"
+        android:visibility="gone">
 
         <TextView
             style="@style/style_add_label"

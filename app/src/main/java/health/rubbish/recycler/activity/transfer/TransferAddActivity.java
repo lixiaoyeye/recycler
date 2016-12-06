@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -156,13 +158,8 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
             }
         });
         transferadd_trashcan_rfid = (Button)findViewById(R.id.transferadd_trashcan_rfid) ;
-        transferadd_trashcan_rfid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                type = 1;
-                readUtil.readUfhCard(ReadMode.EPC);
-            }
-        });
+
+
 
         transferadd_dustybin = (EditText) findViewById(R.id.transferadd_dustybin);
         transferadd_dustybin.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +179,30 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
             }
         });
 
+
         initDevice();
+       /* transferadd_trashcan_rfid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type = 1;
+                readUtil.readUfhCard(ReadMode.EPC);
+            }
+        });*/
+
+        transferadd_trashcan.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_F12) {
+                    type = 1;
+                    readUtil.readUfhCard(ReadMode.EPC);
+
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
 
 //        transferadd_trashcan.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);
 //        transferadd_dustybin.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);

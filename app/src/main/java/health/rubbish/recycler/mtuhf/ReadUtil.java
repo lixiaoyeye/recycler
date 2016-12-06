@@ -3,6 +3,7 @@ package health.rubbish.recycler.mtuhf;
 import android.content.Context;
 import android.haobin.utils.Tools;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Created by xiayanlei on 2016/11/25.
@@ -38,6 +39,7 @@ public class ReadUtil {
     public void readUfhCard(ReadMode readMode) {
         if (readMode == null)
             return;
+        Log.e("222222",""+readMode);
         switch (readMode) {
             case TID:
                 readTid();
@@ -58,7 +60,9 @@ public class ReadUtil {
         byte[] data2 = new byte[4 * 2];
         data2 = Ufh3Data.UhfGetData.Read6C((byte) 0, new byte[]{}, (byte) 2, (byte) 0x00, (byte) 4, Tools.hexString2Bytes("00000000"));
         if (data2 != null) {
+
             String data = Tools.bytesToHexString(data2);
+            Log.e("33",""+data);
             if (readListener != null)
                 readListener.onDataReceived(data);
         } else {

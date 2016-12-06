@@ -120,7 +120,6 @@ public class CaptureActivity extends Activity implements Callback {
         }
     }
 
-
     private void initCamera(SurfaceHolder surfaceHolder) {
         try {
             CameraManager.get().openDriver(surfaceHolder);
@@ -216,6 +215,4 @@ public class CaptureActivity extends Activity implements Callback {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
 }

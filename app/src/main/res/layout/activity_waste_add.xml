@@ -46,7 +46,8 @@
                     android:layout_height="30dp"
                     android:layout_marginLeft="@dimen/medium_margin_8dp"
                     android:background="@drawable/button_rfid_normal"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -72,17 +73,22 @@
                     style="@style/text_label"
                     android:text="科室：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/room_text"
                     style="@style/text_add_content"
-                    android:hint="@string/force_select_hint" />
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:hint="@string/force_select_hint"
+                    android:drawableRight="@drawable/icon_right_arrow2"
+                    android:background="@null"/>
 
-                <ImageView
-                    android:id="@+id/room_scan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/medium_margin_8dp"
-                    android:src="@drawable/scan" />
+                <TextView
+                    android:id="@+id/room_text_arrow"
+                    style="@style/text_add_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/icon_right_arrow2"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -96,8 +102,9 @@
                 <TextView
                     android:id="@+id/nurse_text"
                     style="@style/text_add_content"
+                    android:hint="@string/force_select_hint"
                     android:drawableRight="@drawable/icon_right_arrow2"
-                    android:hint="@string/force_select_hint" />
+                    />
             </LinearLayout>
 
             <View style="@style/normal_diver" />

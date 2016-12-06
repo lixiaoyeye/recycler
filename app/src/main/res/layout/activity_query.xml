@@ -103,7 +103,6 @@
             <View style="@style/normal_diver" />
 
             <LinearLayout style="@style/waste_add_linearlayout">
-
                 <TextView
                     style="@style/text_label"
                     android:layout_width="wrap_content"

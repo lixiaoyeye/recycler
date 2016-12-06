@@ -2,8 +2,6 @@ package health.rubbish.recycler.util;
 
 import java.io.IOException;
 
-import com.example.mt5000_jar_demo.R;
-
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -12,6 +10,8 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Vibrator;
 import android.util.Log;
+
+import health.rubbish.recycler.R;
 
 public class BeepManager {
 
