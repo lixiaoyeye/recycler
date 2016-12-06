@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import health.rubbish.recycler.adapter.WasteListAdapter;
 import health.rubbish.recycler.mtuhf.ReadMode;
 import health.rubbish.recycler.mtuhf.ReadUtil;
 import health.rubbish.recycler.mtuhf.Ufh3Data;
@@ -60,7 +61,7 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
     Button transferadd_trashcan_rfid;
     Button transferadd_dustybin_rfid;
 
-    TrashListAdapter adapter;
+    WasteListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     CustomProgressDialog progressDialog;
     int type = 0;
@@ -242,8 +243,8 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
     }
 
     private void setData() {
-        adapter = new TrashListAdapter(this);
-        adapter.setData(rows);
+        adapter = new WasteListAdapter();
+        adapter.setWasteItems(rows);
         listView.setAdapter(adapter);
         EmptyFiller.fill(this,listView,"无数据");
     }
@@ -260,7 +261,7 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
         protected void onPostExecute(List<TrashItem> items) {
             progressDialog.dismiss();
             rows = items;
-            adapter.setData(rows);
+            adapter.setWasteItems(rows);
         }
 
         @Override

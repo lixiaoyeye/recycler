@@ -220,7 +220,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         hideDialog();
-                        toast("获取数据失败");
+                        toast("用户名或密码错误，登陆失败");
                     }
                 });
             }

@@ -45,11 +45,22 @@ public class TrashDao {
         return result;
     }
 
+    //获取当天垃圾信息
+    public List<TrashItem> getNewTrashToday(String date) {
+        List<TrashItem> result = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (  status = ? )", new String[]{date, Constant.Status.NEWCOLLECT}, null, null, null);
+        while (cursor.moveToNext()) {
+            result.add(getTrash(cursor));
+        }
+        return result;
+    }
+
     //转储获取当天已经转储垃圾信息
     public List<TrashItem> getAllTransferedTrashToday(String date) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and ( status = ? or status = ? or status = ? )", new String[]{date, Constant.Status.TRASFER,  Constant.Status.TRASFERING, Constant.Status.ENTRUCKER}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (  status = ? )", new String[]{date, Constant.Status.TRASFERING}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -74,7 +85,7 @@ public class TrashDao {
     public List<TrashItem> getAllEntruckeredTrashToday(String date) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (status = ? or status = ?)", new String[]{date, Constant.Status.ENTRUCKER, Constant.Status.ENTRUCKERING}, null, null, " date desc");
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and (status = ?)", new String[]{date,  Constant.Status.ENTRUCKERING}, null, null, " date desc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }

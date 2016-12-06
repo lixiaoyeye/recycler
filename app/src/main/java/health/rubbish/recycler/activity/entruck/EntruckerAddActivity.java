@@ -21,6 +21,7 @@ import java.util.List;
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.activity.collection.WasteDetailActivity;
 import health.rubbish.recycler.adapter.TrashListAdapter;
+import health.rubbish.recycler.adapter.WasteListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
@@ -52,7 +53,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     EditText entruckeradd_trashcancode;
     Button entruckeradd_trashcancode_rfid;
 
-    TrashListAdapter adapter;
+    WasteListAdapter adapter;
     List<TrashItem> rows = new ArrayList<>();
     CustomProgressDialog progressDialog;
     String entruckerid;
@@ -78,7 +79,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     private void initHeaderView() {
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
-        headerLayout.showTitle("垃圾转储");
+        headerLayout.showTitle("垃圾装车");
         headerLayout.showRightTextButton("确定", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,8 +202,8 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     }
 
     private void setData() {
-        adapter = new TrashListAdapter(this);
-        adapter.setData(rows);
+        adapter = new WasteListAdapter();
+        adapter.setWasteItems(rows);
         listView.setAdapter(adapter);
        // EmptyFiller.fill(this,listView,"无数据");
     }
@@ -221,7 +222,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         protected void onPostExecute(List<TrashItem> items) {
             progressDialog.dismiss();
             rows = items;
-            adapter.setData(rows);
+            adapter.setWasteItems(rows);
         }
 
         @Override

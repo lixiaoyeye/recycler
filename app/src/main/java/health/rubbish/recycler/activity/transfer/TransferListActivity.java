@@ -22,7 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import health.rubbish.recycler.R;
+import health.rubbish.recycler.activity.collection.WasteAddActivity;
 import health.rubbish.recycler.activity.collection.WasteDetailActivity;
+import health.rubbish.recycler.activity.collection.WasteListActivity;
 import health.rubbish.recycler.activity.entruck.EntruckerListActivity;
 import health.rubbish.recycler.adapter.TransferListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
@@ -90,12 +92,19 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
         headerLayout.showTitle("今日转储列表");
-        headerLayout.showRightTextButton("批量上传", new View.OnClickListener() {
+        headerLayout.showRightImageButton(R.drawable.eventhome_add_icon, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TransferListActivity.this,TransferAddActivity.class);
+                startActivity(intent);
+            }
+        });
+        /*headerLayout.showRightTextButton("批量上传", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadTransferTrashInfo();
             }
-        });
+        });*/
     }
 
     private void initView() {
@@ -119,8 +128,8 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
         transferView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(TransferListActivity.this,TransferAddActivity.class);
-                startActivity(intent);
+                uploadTransferTrashInfo();
+
 
             }
         });
@@ -226,7 +235,7 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
                     }
                 }
                  TrashDao.getInstance().setAllTrash(items);
-                 adapter.setData(rows);
+                updateStartAndEndTime(0);
 
                         toast("成功");
 

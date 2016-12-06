@@ -89,7 +89,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         saveBtn.setOnClickListener(this);
         initDevice();
         //设置默认值
-        formCodeText.setText(Utils.getUserId() + System.currentTimeMillis());
+        formCodeText.setText(Utils.getUserId()+"-" + DateUtil.getTimeString().replaceAll("-","").replaceAll(":","").replaceAll(" ","-"));
         //roomText.setText();
         collectorText.setText(Utils.getUserName());
         dtmText.setText(DateUtil.getTimeString());
@@ -196,7 +196,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.AREA);
                 startActivityForResult(intent, Constant.Reference.AREA);
                 break;
-            case R.id.room_text:
+            case R.id.room_text_arrow:
                 intent.putExtra(Constant.Reference.REFER_TITLE, "科室选择");
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.DEPART);
                 startActivityForResult(intent, Constant.Reference.DEPART);

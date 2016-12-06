@@ -88,10 +88,18 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
         headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.isShowBackButton(true);
         headerLayout.showTitle("垃圾装车列表");
-        headerLayout.showRightTextButton("批量上传", new View.OnClickListener() {
+       /* headerLayout.showRightTextButton("批量上传", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadEntruckerTrashInfo();
+            }
+        });*/
+
+        headerLayout.showRightImageButton(R.drawable.eventhome_add_icon, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EntruckerListActivity.this,EntruckerAddActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -117,9 +125,8 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
         entruckerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EntruckerListActivity.this,EntruckerAddActivity.class);
-                startActivity(intent);
 
+                uploadEntruckerTrashInfo();
             }
         });
     }
@@ -227,12 +234,12 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
                         }
                     }
                 }
+                TrashDao.getInstance().setAllTrash(items);
+                adapter.setData(rows);
+
+                toast("成功");
 
 
-                        TrashDao.getInstance().setAllTrash(items);
-                        adapter.setData(rows);
-
-                        toast("成功");
             }
             else
             {

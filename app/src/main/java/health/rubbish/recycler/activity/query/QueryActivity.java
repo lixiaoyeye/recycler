@@ -1,8 +1,10 @@
 package health.rubbish.recycler.activity.query;
 
 import android.content.Intent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import health.rubbish.recycler.R;
@@ -27,7 +29,7 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
     private TextView roomText;
     private TextView nurseText;
     private TextView categoryText;
-    private TextView garbageCcText;
+    private EditText garbageCcText;
     private TextView garbagePkgText;
     private Button rfidBtn;
     private ReadUtil readUtil;
@@ -50,20 +52,29 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         roomText = (TextView) findViewById(R.id.room_text);
         nurseText = (TextView) findViewById(R.id.nurse_text);
         categoryText = (TextView) findViewById(R.id.category_text);
-        garbageCcText = (TextView) findViewById(R.id.garbage_can_text);
+        garbageCcText = (EditText) findViewById(R.id.garbage_can_text);
         garbagePkgText = (TextView) findViewById(R.id.garbage_package_text);
         rfidBtn = (Button) findViewById(R.id.rfid_button);
-        Button roomScanBtn = (Button) findViewById(R.id.room_scan_button);
         Button qrscanBtn = (Button) findViewById(R.id.qrscan_button);
         Button searchBtn = (Button) findViewById(R.id.search_btn);
         roomText.setOnClickListener(this);
         nurseText.setOnClickListener(this);
         categoryText.setOnClickListener(this);
-        roomScanBtn.setOnClickListener(this);
         rfidBtn.setOnClickListener(this);
         qrscanBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
         initDevice();
+        garbageCcText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_F12) {
+                    readUtil.readUfhCard(ReadMode.EPC);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -95,10 +106,6 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                 intent.putExtra(Constant.Reference.REFER_TITLE, "科室选择");
                 intent.putExtra(Constant.Reference.REFER_TYPE, Constant.Reference.DEPART);
                 startActivityForResult(intent, Constant.Reference.DEPART);
-                break;
-            case R.id.room_scan_button:
-                intent.setClass(this, CaptureActivity.class);
-                startActivityForResult(intent, Constant.DEPART_SCAN);
                 break;
             case R.id.nurse_text:
                 intent.putExtra(Constant.Reference.REFER_TITLE, "护士选择");

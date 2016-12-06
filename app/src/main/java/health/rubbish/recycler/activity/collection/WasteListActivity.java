@@ -178,7 +178,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
                 {
                     return trashDao.queryAllTrash(departcode, nurseid, categorycode, trashcancode, trashcode);
                 }
-                return trashDao.getAllTrashToday(DateUtil.getDateString(calendar.getTime()));
+                return trashDao.getNewTrashToday(DateUtil.getDateString(calendar.getTime()));
             }
 
             @Override
