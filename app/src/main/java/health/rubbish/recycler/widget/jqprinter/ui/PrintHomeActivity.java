@@ -37,6 +37,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -377,8 +378,23 @@ public class PrintHomeActivity extends BaseActivity {
 			//软件无法判断当前打印的内容是否打印完好，所以需要重新打印当前张。你可以增加一个按钮来决定是打当前张还是打下一张。
 			rePrint = false;
 		}
-		if (getPrinterState())
-			printExpress();
+		if (getPrinterState()) {
+			if(printExpress())
+			{
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(300);
+							PrintHomeActivity.this.finish();
+						}catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		}
 	}
 
 	private boolean getPrinterState()

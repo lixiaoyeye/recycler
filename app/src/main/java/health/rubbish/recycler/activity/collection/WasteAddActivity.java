@@ -357,6 +357,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         trashItem.collectorid = Utils.getUserId();
         trashItem.colletime = dtmText.getText().toString();
         trashItem.status = Constant.Status.NEWCOLLECT;
+
         TrashDao trashDao = TrashDao.getInstance();
         trashDao.setTrash(trashItem);
 

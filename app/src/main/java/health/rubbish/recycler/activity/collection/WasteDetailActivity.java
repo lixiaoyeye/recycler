@@ -67,7 +67,7 @@ public class WasteDetailActivity extends BaseActivity {
         collectorText.setText(wasteItem.collector);
         dtmText.setText(wasteItem.colletime);
         stateText.setText(wasteItem.getStatusNam());
-        roomText.setText(wasteItem.departcode);
+        roomText.setText(wasteItem.departname);
         nurseText.setText(wasteItem.nurse);
         typeText.setText(wasteItem.categoryname);
         weightText.setText(wasteItem.weight);

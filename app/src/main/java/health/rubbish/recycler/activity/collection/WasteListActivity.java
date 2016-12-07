@@ -22,6 +22,7 @@ import health.rubbish.recycler.R;
 import health.rubbish.recycler.activity.entruck.EntruckerListActivity;
 import health.rubbish.recycler.adapter.WasteListAdapter;
 import health.rubbish.recycler.base.BaseActivity;
+import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.entity.WasteUploadResp;
@@ -81,14 +82,22 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         calendar = Calendar.getInstance();
         initData();
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
-        headerLayout.showTitle("垃圾收集");
+
         headerLayout.showLeftBackButton();
-        headerLayout.showRightImageButton(R.drawable.eventhome_add_icon, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(WasteListActivity.this, WasteAddActivity.class));
-            }
-        });
+
+        if (search)
+        {
+            headerLayout.showTitle("搜索结果");
+        }
+        else {
+            headerLayout.showTitle("垃圾收集");
+            headerLayout.showRightImageButton(R.drawable.eventhome_add_icon, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(WasteListActivity.this, WasteAddActivity.class));
+                }
+            });
+        }
 
         date_pageturn_lnr = (LinearLayout)findViewById(R.id.date_pageturn_lnr);
         date_pageturn_lnr.setVisibility(search?View.GONE:View.VISIBLE);
@@ -106,6 +115,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         wasteListView.setPullRefreshEnable(false);
         adapter = new WasteListAdapter();
         wasteListView.setAdapter(adapter);
+
         Button uploadBtn = (Button) findViewById(R.id.upload_btn);
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +123,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
                 uploadWaste();
             }
         });
+        uploadBtn.setVisibility(search?View.GONE:View.VISIBLE);
     }
 
     private void initData() {
@@ -232,7 +243,8 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
             protected Void doInBackground(Void... params) {
                 if (wasteUploadResps != null) {
                     for (WasteUploadResp resp : wasteUploadResps) {
-                        TrashDao.getInstance().updateTrashStatus(resp.trashcode, resp.status);
+                        //TrashDao.getInstance().updateTrashStatus(resp.trashcode, resp.status);
+                        TrashDao.getInstance().updateTrashStatus(resp.trashcode, Constant.Status.DOWNLOAD);
                     }
                 }
                 return null;

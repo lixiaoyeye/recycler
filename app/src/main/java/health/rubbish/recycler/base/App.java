@@ -30,6 +30,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        UnCaught.getInstance().init(this);
         ctx = this;
         currentUser = LoginUtil.getLoginUser();
     }

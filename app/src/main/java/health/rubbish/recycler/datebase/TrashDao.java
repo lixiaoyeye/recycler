@@ -93,11 +93,11 @@ public class TrashDao {
     }
 
     //根据桶号获取待装车垃圾信息
-    public List<TrashItem> getAllUnEntruckerTrashTodayByCan(String dustybincode) {
+    public List<TrashItem> getAllUnEntruckerTrashTodayByCan(String trashcancode) {
         List<TrashItem> result = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Log.e("0000000",dustybincode);
-        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and dustybincode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, dustybincode}, null, null, " date asc");
+        Log.e("0000000",trashcancode);
+        Cursor cursor = db.query(DbHelper.TRASH_TABLE, null, "date = ? and  status = ? and trashcancode = ? ", new String[]{DateUtil.getDateString(), Constant.Status.TRASFER, trashcancode}, null, null, " date asc");
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }
@@ -268,17 +268,18 @@ public class TrashDao {
         StringBuilder sb = new StringBuilder("select * from ");
         sb.append(DbHelper.TRASH_TABLE).append(" where date <= ? ");
         if (!TextUtils.isEmpty(departcode))
-            sb.append(" and departcode = " + departcode);
+            sb.append(" and departcode =  '"  + departcode+"'");
         if (!TextUtils.isEmpty(nurseid))
-            sb.append(" and nurseid = " + nurseid);
+            sb.append(" and nurseid =  '"  + nurseid+"'");
         if (!TextUtils.isEmpty(categorycode))
-            sb.append(" and categorycode = " + categorycode);
+            sb.append(" and categorycode = '" + categorycode+"'");
         if (!TextUtils.isEmpty(trashcancode))
-            sb.append(" and trashcancode = " + trashcancode);
+            sb.append(" and trashcancode =  '"  + trashcancode+"'");
         if (!TextUtils.isEmpty(trashcode))
-            sb.append(" and trashcode = " + trashcode);
+            sb.append(" and trashcode =  '" + trashcode+"'");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(sb.toString(), new String[]{DateUtil.getDateString()});
+
         while (cursor.moveToNext()) {
             result.add(getTrash(cursor));
         }

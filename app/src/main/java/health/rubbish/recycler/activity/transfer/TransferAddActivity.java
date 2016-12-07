@@ -230,6 +230,7 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
     public void onDataReceived(String data) {
         if (type ==1) {
             transferadd_trashcan.setText(data);
+            //new TransferAddListAsyncTask().execute(transferadd_trashcan.getText().toString());
         }
         else if (type == 2)
         {

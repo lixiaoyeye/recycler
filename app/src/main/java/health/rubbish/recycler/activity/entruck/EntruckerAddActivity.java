@@ -265,7 +265,7 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
     @Override
     public void onDataReceived(String data) {
         entruckeradd_trashcancode.setText(data);
-
+        //new EntruckerAddListAsyncTask().execute(entruckeradd_trashcancode.getText().toString());
     }
 
     @Override
