@@ -66,12 +66,11 @@
     <TextView
         android:id="@+id/entruckerlist_entrucker"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="#FF8000"
+        android:background="@color/common_blue"
         android:gravity="center"
-        android:padding="12dp"
-        android:text="- - - 垃 圾 装 车 - - -"
+        android:text="上   传"
         android:textColor="@color/white"
         android:textSize="16sp" />
 </RelativeLayout>

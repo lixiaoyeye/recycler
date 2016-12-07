@@ -191,7 +191,7 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
             for (TrashItem item : rows) {
                 if (item.status.equals(Constant.Status.TRASFERING)) {
                     object = new JSONObject();
-                    object.put("id", item.trashcode);
+                    object.put("id", item.trashid);
                     object.put("trashcode", item.trashcode);
                     object.put("status", Constant.Status.TRASFER);
                     object.put("transfertime", item.transfertime);

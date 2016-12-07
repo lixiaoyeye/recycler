@@ -190,7 +190,7 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
             for (TrashItem item : rows) {
                 if (item.status.equals(Constant.Status.ENTRUCKERING)) {
                     object = new JSONObject();
-                    object.put("id", item.trashcode);
+                    object.put("id", item.trashid);
                     object.put("trashcode", item.trashcode);
                     object.put("status", Constant.Status.ENTRUCKER);
                     object.put("platnumber", item.platnumber);
@@ -236,14 +236,14 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
                 }
                 TrashDao.getInstance().setAllTrash(items);
                 adapter.setData(rows);
-
+                updateStartAndEndTime(0);
                 toast("成功");
 
 
             }
             else
             {
-                toast("获取数据失败");
+                toast("上传失败");
             }
         }
         catch (Exception e)

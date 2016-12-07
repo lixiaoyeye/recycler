@@ -79,7 +79,6 @@
                     android:layout_width="0dp"
                     android:layout_weight="3"
                     android:hint="@string/force_select_hint"
-                    android:drawableRight="@drawable/icon_right_arrow2"
                     android:background="@null"/>
 
                 <TextView
@@ -88,7 +87,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:drawableRight="@drawable/icon_right_arrow2"
-                    android:visibility="gone"/>
+                    />
             </LinearLayout>
 
             <View style="@style/normal_diver" />

@@ -114,6 +114,7 @@ public class TrashDao {
 
     public TrashItem getTrash(Cursor cursor) {
         TrashItem item = new TrashItem();
+        item.trashid = cursor.getString(cursor.getColumnIndex("trashid"));
         item.date = cursor.getString(cursor.getColumnIndex("date"));
         item.trashcode = cursor.getString(cursor.getColumnIndex("trashcode"));
         item.status = cursor.getString(cursor.getColumnIndex("status"));
@@ -183,6 +184,7 @@ public class TrashDao {
     private ContentValues getContentValues(TrashItem item) {
         ContentValues values = new ContentValues();
         values.put("date", item.date);
+        values.put("trashid", item.trashid);
         values.put("trashcode", item.trashcode);
         values.put("status", item.status);
         values.put("trashcancode", item.trashcancode);

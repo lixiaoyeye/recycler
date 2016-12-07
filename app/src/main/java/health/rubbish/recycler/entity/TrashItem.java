@@ -8,6 +8,7 @@ import health.rubbish.recycler.constant.Constant;
  * Created by Lenovo on 2016/11/20.
  */
 public class TrashItem implements Serializable {
+    public String  trashid;
     public String date;
     public String trashcode;            // 垃圾袋编号
     public String status;            // 垃圾袋状态

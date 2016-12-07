@@ -17,15 +17,15 @@
 
         <Button
             android:id="@+id/backBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:padding="10dp"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:padding="20dp"
             android:background="@null"
             android:drawableLeft="@drawable/chat_common_base_header_back_btn"
             android:gravity="center"
             android:layout_gravity="center_vertical"
             android:textColor="#fff"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
@@ -71,12 +71,16 @@
 
         <ImageView
             android:id="@+id/right_im"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:padding="9dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:visibility="gone" />
+            android:src="@drawable/eventhome_add_icon"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -20,7 +20,8 @@
         android:textStyle="bold"
         android:text="转储"
         android:background="@drawable/status_transfer"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tranferlist_item_trashcode_label"
@@ -84,7 +85,8 @@
         android:text="2016-09-78 12:20"
         android:ellipsize="end"
         android:textColor="@color/base_color_text_gray"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:visibility="gone"/>
 
     <View style="@style/style_line_left10dp"
         android:layout_alignParentBottom="true"/>

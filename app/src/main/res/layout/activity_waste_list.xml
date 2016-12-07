@@ -21,8 +21,7 @@
     <Button
         android:id="@+id/upload_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_margin_8dp"
+        android:layout_height="50dp"
         android:gravity="center"
         android:background="@color/common_blue"
         android:padding="10dp"

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -83,6 +84,9 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
         headerLayout.showRightTextButton("确定", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!checkParams()) {
+                    return;
+                }
                 for (TrashItem item:rows)
                 {
                     item.date = DateUtil.getDateString();
@@ -97,6 +101,30 @@ public class EntruckerAddActivity extends BaseActivity implements ReadUtil.ReadL
                 new EntruckerAddAsyncTask().execute();
             }
         });
+    }
+
+    /**
+     * 校验信息完整性
+     */
+    private boolean checkParams() {
+
+        if (TextUtils.isEmpty(entruckeradd_platnumber.getText().toString())) {
+            ToastUtil.shortToast(this, "请输入车牌号");
+            return false;
+        }
+        if (TextUtils.isEmpty(entruckeradd_driver.getText().toString())) {
+            ToastUtil.shortToast(this, "请输入司机姓名");
+            return false;
+        }
+        if (TextUtils.isEmpty(entruckeradd_driverphone.getText().toString())) {
+            ToastUtil.shortToast(this, "请输入司机号码");
+            return false;
+        }
+        if (TextUtils.isEmpty(entruckeradd_trashcancode.getText().toString())) {
+            ToastUtil.shortToast(this, "请扫描垃圾桶RFID");
+            return false;
+        }
+        return true;
     }
 
     private void initView() {

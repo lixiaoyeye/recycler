@@ -66,12 +66,12 @@
     <TextView
         android:id="@+id/transferlist_transfer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="#FF8000"
+        android:background="@color/common_blue"
         android:gravity="center"
         android:padding="12dp"
-        android:text="- - - 垃 圾 转 储 - - -"
+        android:text="上  传"
         android:textColor="@color/white"
         android:textSize="16sp" />
 </RelativeLayout>

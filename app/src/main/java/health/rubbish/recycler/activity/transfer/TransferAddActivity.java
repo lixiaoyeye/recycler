@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -94,6 +95,9 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
         headerLayout.showRightTextButton("确定", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!checkParams()) {
+                    return;
+                }
                 for (TrashItem item:rows)
                 {
                     item.date = DateUtil.getDateString();
@@ -103,6 +107,18 @@ public class TransferAddActivity extends BaseActivity implements ReadUtil.ReadLi
                 new TransferAddAsyncTask().execute();
             }
         });
+    }
+
+    /**
+     * 校验信息完整性
+     */
+    private boolean checkParams() {
+
+        if (TextUtils.isEmpty(transferadd_trashcan.getText().toString())) {
+            ToastUtil.shortToast(this, "请扫描垃圾桶RFID");
+            return false;
+        }
+        return true;
     }
 
     private void initView() {
