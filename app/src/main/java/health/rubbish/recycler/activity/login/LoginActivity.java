@@ -118,6 +118,7 @@ public class LoginActivity extends BaseActivity {
         new RequestUtil(new ParseCallback<String>() {
             @Override
             public void onComplete(String result) {
+                Log.e("result",result);
                 parseLoginResponse(result);
             }
 

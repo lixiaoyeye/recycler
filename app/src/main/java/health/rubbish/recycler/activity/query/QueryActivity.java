@@ -1,22 +1,28 @@
 package health.rubbish.recycler.activity.query;
 
 import android.content.Intent;
+import android.haobin.barcode.BarcodeManager;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.activity.collection.ReferenceActivity;
 import health.rubbish.recycler.activity.collection.WasteListActivity;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
+import health.rubbish.recycler.datebase.CatogeryDao;
 import health.rubbish.recycler.datebase.DepartmentDao;
 import health.rubbish.recycler.entity.DepartmentItem;
 import health.rubbish.recycler.mtuhf.ReadMode;
 import health.rubbish.recycler.mtuhf.ReadUtil;
 import health.rubbish.recycler.mtuhf.Ufh3Data;
+import health.rubbish.recycler.util.BeepManager;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.HeaderLayout;
 import health.rubbish.recycler.widget.zxing.activity.CaptureActivity;
@@ -46,6 +52,8 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void init() {
+        beepManager = new BeepManager(this, true, false);
+
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showLeftBackButton();
         headerLayout.showTitle(R.string.data_query);
@@ -67,8 +75,47 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         garbageCcText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_F12) {
+                if (keyCode == KeyEvent.KEYCODE_F12 && event.getAction() == KeyEvent.ACTION_UP) {
+                    Toast.makeText(QueryActivity.this,"正在RFID，请稍后",Toast.LENGTH_LONG).show();
+
+                    if (null != barcodeManager) {
+                        barcodeManager.Barcode_Close();
+                        barcodeManager.Barcode_Stop();
+                        barcodeManager=null;
+                    }
+                    readUtil = new ReadUtil().setReadListener(QueryActivity.this);
+                    readUtil.initUfh(QueryActivity.this);
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     readUtil.readUfhCard(ReadMode.EPC);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        garbagePkgText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_F12 ) {
+                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+                        Toast.makeText(QueryActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
+                        readUtil = null;
+                        if (barcodeManager == null) {
+                            barcodeManager = BarcodeManager.getInstance();
+                        }
+                        barcodeManager.Barcode_Open(QueryActivity.this, dataReceived);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    barHandler.sendEmptyMessage(Handler_Scan);
                     return true;
                 } else {
                     return false;
@@ -174,4 +221,62 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         trashcode = garbagePkgText.getText().toString();
         WasteListActivity.launchListActivity(this, departcode, nurseid, categorycode, trashcancode, trashcode);
     }
+
+
+    //二维码
+    private long nowTime = 0;
+    private long lastTime = 0;
+    private String codeId;
+    private final int Handler_Scan = 2200;
+    private BeepManager beepManager;
+    private BarcodeManager barcodeManager;
+    private final int Handler_SHOW_RESULT = 1999;
+    private byte[] codeBuffer;
+
+    private Handler barHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case Handler_SHOW_RESULT:
+                    if (null != codeBuffer) {
+                        String str = new String(codeBuffer);
+                        garbagePkgText.setText(str);
+                        beepManager.play();
+                        barcodeManager.Barcode_Stop();
+                    }
+                    break;
+                case Handler_Scan:
+                    nowTime = System.currentTimeMillis();
+                    barcodeManager.Barcode_Stop();
+                    // 按键时间不低于200ms
+                    //if (nowTime - lastTime > 200)
+                {
+                    System.out.println("scan(0)");
+                    if (null != barcodeManager) {
+                        barcodeManager.Barcode_Start();
+                    }
+                    lastTime = nowTime;
+                }
+                break;
+
+                default:
+                    break;
+            }
+        };
+    };
+
+    BarcodeManager.Callback dataReceived = new BarcodeManager.Callback() {
+
+        @Override
+        public void Barcode_Read(byte[] buffer, String codeId, int errorCode) {
+            // TODO Auto-generated method stub
+            if (null != buffer) {
+                codeBuffer = buffer;
+                QueryActivity.this.codeId = codeId;
+                Message msg = new Message();
+                msg.what = Handler_SHOW_RESULT;
+                barHandler.sendMessage(msg);
+                barcodeManager.Barcode_Stop();
+            }
+        }
+    };
 }

@@ -52,7 +52,8 @@
 
             <View style="@style/normal_diver" />
 
-            <LinearLayout style="@style/waste_add_linearlayout">
+            <LinearLayout style="@style/waste_add_linearlayout"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/text_label"
@@ -61,7 +62,6 @@
                 <TextView
                     android:id="@+id/area_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2"
                     android:hint="@string/force_select_hint" />
             </LinearLayout>
 
@@ -87,7 +87,8 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:drawableRight="@drawable/icon_right_arrow2"
-                    />
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <View style="@style/normal_diver" />
@@ -102,7 +103,6 @@
                     android:id="@+id/nurse_text"
                     style="@style/text_add_content"
                     android:hint="@string/force_select_hint"
-                    android:drawableRight="@drawable/icon_right_arrow2"
                     />
             </LinearLayout>
 
@@ -114,10 +114,9 @@
                     style="@style/text_label"
                     android:text="类型：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/waste_type_text"
                     style="@style/text_add_content"
-                    android:drawableRight="@drawable/icon_right_arrow2"
                     android:hint="@string/force_select_hint" />
             </LinearLayout>
 
@@ -141,6 +140,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/medium_margin_8dp"
                     android:text="kg"
+                    android:inputType="number"
+                    android:digits="1234567890."
                     android:textColor="@color/text_black"
                     android:textSize="20sp" />
             </LinearLayout>

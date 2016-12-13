@@ -86,6 +86,37 @@ public class DepartmentDao {
         return result;
     }
 
+
+    public String getdepartarea(String departareacode) {
+        String result = "";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "departareacode = ? and date = ?", new String[]{departareacode, DateUtil.getDateString()}, null, null, null);
+        if (cursor.moveToNext()) {
+            result = cursor.getString(cursor.getColumnIndex("departarea"));
+        }
+        return result;
+    }
+
+    public String getdepartname(String departcode) {
+        String result = "";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "departcode = ? and date = ?", new String[]{departcode, DateUtil.getDateString()}, null, null, null);
+        if (cursor.moveToNext()) {
+            result = cursor.getString(cursor.getColumnIndex("departname"));
+        }
+        return result;
+    }
+
+    public String getnurse(String nurseid) {
+        String result = "";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.DEPART_TABLE, null, "nurseid = ? and date = ?", new String[]{nurseid, DateUtil.getDateString()}, null, null, null);
+        if (cursor.moveToNext()) {
+            result = cursor.getString(cursor.getColumnIndex("nurse"));
+        }
+        return result;
+    }
+
     public void setDepartment(DepartmentItem item) {
         String id = getIdByDepartment(item);
         if (TextUtils.isEmpty(id)) {

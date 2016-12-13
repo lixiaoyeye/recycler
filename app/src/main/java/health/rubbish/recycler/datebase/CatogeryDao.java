@@ -70,6 +70,16 @@ public class CatogeryDao {
         return result;
     }
 
+    public String getcategoryname(String categorycode) {
+        String result = "";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.CAT_TABLE, null, "categorycode = ?", new String[]{categorycode}, null, null, null);
+        if (cursor.moveToNext()) {
+            result = cursor.getString(cursor.getColumnIndex("categoryname"));
+        }
+        return result;
+    }
+
     public void setCatogery(CatogeryItem item) {
         String id = getIdByCatogery(item);
         if (TextUtils.isEmpty(id)) {

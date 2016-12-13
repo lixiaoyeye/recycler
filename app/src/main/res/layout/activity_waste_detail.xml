@@ -142,7 +142,8 @@
 
             <View style="@style/normal_diver" />
 
-            <LinearLayout style="@style/waste_add_linearlayout">
+            <LinearLayout style="@style/waste_add_linearlayout"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/text_label"

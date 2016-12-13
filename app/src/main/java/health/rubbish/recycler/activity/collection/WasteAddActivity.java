@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import health.rubbish.recycler.R;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
+import health.rubbish.recycler.datebase.CatogeryDao;
 import health.rubbish.recycler.datebase.DepartmentDao;
 import health.rubbish.recycler.datebase.TrashDao;
 import health.rubbish.recycler.entity.DepartmentItem;
@@ -44,7 +46,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     private EditText roomText;
     private TextView nurseText;
     private TextView room_text_arrow;
-    private TextView typeText;
+    private EditText typeText;
     private EditText weightText;
     private TextView collectorText;
     private TextView dtmText;
@@ -53,9 +55,11 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     private TrashItem trashItem = new TrashItem();
     private List<DepartmentItem> departmentItems = new ArrayList<>();
 
-    private final int Handler_Scan = 2000;
-    private BeepManager beepManager;
-    private BarcodeManager barcodeManager;
+
+    private int type = 0;
+
+    private static String catogeryname = "";
+    private static String catogerycode ="";
 
     @Override
     protected int getLayoutId() {
@@ -64,6 +68,8 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     protected void init() {
+        beepManager = new BeepManager(this, true, false);
+
         HeaderLayout headerLayout = (HeaderLayout) findViewById(R.id.header_layout);
         headerLayout.showLeftBackButton();
         headerLayout.showTitle("垃圾采集");
@@ -73,7 +79,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         roomText = (EditText) findViewById(R.id.room_text);
         nurseText = (TextView) findViewById(R.id.nurse_text);
         room_text_arrow = (TextView) findViewById(R.id.room_text_arrow);
-        typeText = (TextView) findViewById(R.id.waste_type_text);
+        typeText = (EditText) findViewById(R.id.waste_type_text);
         weightText = (EditText) findViewById(R.id.weight_text);
         collectorText = (TextView) findViewById(R.id.collector_text);
         dtmText = (TextView) findViewById(R.id.dtm_text);
@@ -84,61 +90,39 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         areaText.setOnClickListener(this);
         nurseText.setOnClickListener(this);
         room_text_arrow.setOnClickListener(this);
-        typeText.setOnClickListener(this);
+        //  typeText.setOnClickListener(this);
        // scanImage.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
+
         initDevice();
         //设置默认值
         formCodeText.setText(Utils.getUserId()+"-" + DateUtil.getTimeString().replaceAll("-","").replaceAll(":","").replaceAll(" ","-"));
-        //roomText.setText();
         collectorText.setText(Utils.getUserName());
         dtmText.setText(DateUtil.getTimeString());
-        initData();
+        //initData();
+        if (!TextUtils.isEmpty(catogerycode))
+        {
+            trashItem.categorycode = catogerycode;
+            typeText.setText(catogeryname);
+        }
 
-        garbageCanCodeText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (null != barcodeManager) {
-                    barcodeManager.Barcode_Close();
-                    barcodeManager.Barcode_Stop();
-                    barcodeManager=null;
-                }
-                readUtil = new ReadUtil().setReadListener(WasteAddActivity.this);
-                if (keyCode == KeyEvent.KEYCODE_F12) {
-                    readUtil.readUfhCard(ReadMode.EPC);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
+        setF12Listener();
 
-       /* roomText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (barcodeManager == null) {
-                    barcodeManager = BarcodeManager.getInstance();
-                }
-                barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Log.e("000000",""+keyCode);
-                if (keyCode == KeyEvent.KEYCODE_F12) {
-                    barHandler.sendEmptyMessage(Handler_Scan);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });*/
-
-        beepManager = new BeepManager(this, true, false);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && Ufh3Data.isDeviceOpen()) {
+            Ufh3Data.UhfGetData.CloseUhf();
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+    }
 
 
     /**
@@ -169,20 +153,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         }.execute();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (isFinishing() && Ufh3Data.isDeviceOpen()) {
-            Ufh3Data.UhfGetData.CloseUhf();
-        }
-    }
 
-    @Override
-    protected void onResume() {
-        // TODO Auto-generated method stub
-
-        super.onResume();
-    }
 
     @Override
     public void onClick(View v) {
@@ -220,58 +191,6 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                 break;
         }
     }
-
-
-    private long nowTime = 0;
-    private long lastTime = 0;
-    private String codeId;
-    private Handler barHandler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case Handler_SHOW_RESULT:
-                    if (null != codeBuffer) {
-                        String str = new String(codeBuffer);
-                        roomText.setText(str);
-                        beepManager.play();
-                        barcodeManager.Barcode_Stop();
-                    }
-                    break;
-                case Handler_Scan:
-                    nowTime = System.currentTimeMillis();
-                    barcodeManager.Barcode_Stop();
-                    // 按键时间不低于200ms
-                    if (nowTime - lastTime > 200) {
-                        System.out.println("scan(0)");
-                        if (null != barcodeManager) {
-                            barcodeManager.Barcode_Start();
-                        }
-                        lastTime = nowTime;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        };
-    };
-    private final int Handler_SHOW_RESULT = 1999;
-    private byte[] codeBuffer;
-    BarcodeManager.Callback dataReceived = new BarcodeManager.Callback() {
-
-        @Override
-        public void Barcode_Read(byte[] buffer, String codeId, int errorCode) {
-            // TODO Auto-generated method stub
-            if (null != buffer) {
-                codeBuffer = buffer;
-                WasteAddActivity.this.codeId = codeId;
-                Message msg = new Message();
-                msg.what = Handler_SHOW_RESULT;
-                barHandler.sendMessage(msg);
-                barcodeManager.Barcode_Stop();
-            }
-        }
-    };
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -315,29 +234,6 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onDataReceived(String data) {
-        garbageCanCodeText.setText(data);
-    }
-
-    @Override
-    public void onFailure() {
-        ToastUtil.shortToast(this, "读取失败");
-    }
-
-    /**
-     * 初始化读卡设备
-     */
-    private void initDevice() {
-        readUtil = new ReadUtil().setReadListener(this);
-        if (readUtil.initUfh(this) != 0) {
-            ToastUtil.shortToast(this, "打开设备失败");
-            rfidBtn.setEnabled(false);
-        } else {
-            rfidBtn.setEnabled(true);
-        }
-    }
-
     /**
      * 保存垃圾信息,todo 打印功能
      */
@@ -374,10 +270,10 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
             ToastUtil.shortToast(this, "请扫描垃圾桶RFID");
             return false;
         }
-        if (TextUtils.isEmpty(trashItem.departareacode)) {
+       /* if (TextUtils.isEmpty(trashItem.departareacode)) {
             ToastUtil.shortToast(this, "请选择院区");
             return false;
-        }
+        }*/
         if (TextUtils.isEmpty(trashItem.departcode)) {
             ToastUtil.shortToast(this, "请选择科室");
             return false;
@@ -396,4 +292,188 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         }
         return true;
     }
+
+
+    private void setF12Listener()
+    {
+        garbageCanCodeText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                type =0;
+                if (keyCode == KeyEvent.KEYCODE_F12 && event.getAction() == KeyEvent.ACTION_UP) {
+                    Toast.makeText(WasteAddActivity.this,"正在RFID，请稍后",Toast.LENGTH_LONG).show();
+
+                    if (null != barcodeManager) {
+                        barcodeManager.Barcode_Close();
+                        barcodeManager.Barcode_Stop();
+                        barcodeManager=null;
+                    }
+                    readUtil = new ReadUtil().setReadListener(WasteAddActivity.this);
+                    readUtil.initUfh(WasteAddActivity.this);
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    readUtil.readUfhCard(ReadMode.EPC);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        roomText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                type =1;
+                if (keyCode == KeyEvent.KEYCODE_F12 ) {
+                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+                        Toast.makeText(WasteAddActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
+                        readUtil = null;
+                        if (barcodeManager == null) {
+                            barcodeManager = BarcodeManager.getInstance();
+                        }
+                        barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    barHandler.sendEmptyMessage(Handler_Scan);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        typeText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                type =2;
+                if (keyCode == KeyEvent.KEYCODE_F12 ) {
+                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+                        Toast.makeText(WasteAddActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
+                        readUtil = null;
+                        if (barcodeManager == null) {
+                            barcodeManager = BarcodeManager.getInstance();
+                        }
+                        barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    barHandler.sendEmptyMessage(Handler_Scan);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onDataReceived(String data) {
+        garbageCanCodeText.setText(data);
+    }
+
+    @Override
+    public void onFailure() {
+        ToastUtil.shortToast(this, "读取失败");
+    }
+
+    /**
+     * 初始化读卡设备
+     */
+    private void initDevice() {
+        readUtil = new ReadUtil().setReadListener(this);
+        if (readUtil.initUfh(this) != 0) {
+            ToastUtil.shortToast(this, "打开设备失败");
+            rfidBtn.setEnabled(false);
+        } else {
+            rfidBtn.setEnabled(true);
+        }
+    }
+
+
+    //二维码
+    private long nowTime = 0;
+    private long lastTime = 0;
+    private String codeId;
+    private final int Handler_Scan = 2200;
+    private BeepManager beepManager;
+    private BarcodeManager barcodeManager;
+    private final int Handler_SHOW_RESULT = 1999;
+    private byte[] codeBuffer;
+
+    private Handler barHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case Handler_SHOW_RESULT:
+                    if (null != codeBuffer) {
+                        String str = new String(codeBuffer);
+                        if (type ==1) {
+                            String[] array = str.split("&");
+                            if (array.length == 3) {
+                                trashItem.departareacode =array[0];
+                                trashItem.departcode=array[1];
+                                trashItem.nurseid =array[2];
+                                areaText.setText(DepartmentDao.getInstance().getdepartarea(array[0]));
+                                roomText.setText(DepartmentDao.getInstance().getdepartname(array[1]));
+                                nurseText.setText(DepartmentDao.getInstance().getnurse(array[2]));
+
+                            }
+                            //roomText.setText(str);
+                        }
+                        else if (type ==2) {
+                            catogerycode = str;
+                            catogeryname = CatogeryDao.getInstance().getcategoryname(str);
+                            trashItem.categorycode = catogerycode;
+                            typeText.setText(catogeryname);
+                        }
+                        beepManager.play();
+                        barcodeManager.Barcode_Stop();
+                    }
+                    break;
+                case Handler_Scan:
+                    nowTime = System.currentTimeMillis();
+                    barcodeManager.Barcode_Stop();
+                    // 按键时间不低于200ms
+                    //if (nowTime - lastTime > 200)
+                    {
+                        System.out.println("scan(0)");
+                        if (null != barcodeManager) {
+                            barcodeManager.Barcode_Start();
+                        }
+                        lastTime = nowTime;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        };
+    };
+
+    BarcodeManager.Callback dataReceived = new BarcodeManager.Callback() {
+
+        @Override
+        public void Barcode_Read(byte[] buffer, String codeId, int errorCode) {
+            // TODO Auto-generated method stub
+            if (null != buffer) {
+                codeBuffer = buffer;
+                WasteAddActivity.this.codeId = codeId;
+                Message msg = new Message();
+                msg.what = Handler_SHOW_RESULT;
+                barHandler.sendMessage(msg);
+                barcodeManager.Barcode_Stop();
+            }
+        }
+    };
 }
