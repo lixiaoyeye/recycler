@@ -177,7 +177,7 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
             @Override
             public void onError(String error) {
                 hideDialog();
-                new AlertDialog.Builder(TransferListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                toast("无法连接到网络");
             }
         });
     }

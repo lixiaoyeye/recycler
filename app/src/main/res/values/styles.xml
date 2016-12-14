@@ -29,7 +29,6 @@
 
     <style name="text_label" parent="base_text">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:ems">5</item>
     </style>
 
     <style name="text_add_content" parent="base_text">

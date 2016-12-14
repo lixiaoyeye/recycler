@@ -175,7 +175,7 @@ public class EntruckerListActivity extends BaseActivity  implements View.OnClick
             @Override
             public void onError(String error) {
                 hideDialog();
-                new AlertDialog.Builder(EntruckerListActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                toast("无法连接到网络");
             }
         });
 

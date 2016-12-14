@@ -33,7 +33,7 @@
 
                 <TextView
                     style="@style/text_label"
-                    android:text="垃圾桶号：" />
+                    android:text="桶号：" />
 
                 <EditText
                     android:id="@+id/garbagecan_code_text"

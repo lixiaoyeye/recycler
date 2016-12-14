@@ -71,7 +71,7 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         rfidBtn.setOnClickListener(this);
         qrscanBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
-        initDevice();
+       // initDevice();
         garbageCcText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -83,8 +83,10 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
                         barcodeManager.Barcode_Stop();
                         barcodeManager=null;
                     }
-                    readUtil = new ReadUtil().setReadListener(QueryActivity.this);
-                    readUtil.initUfh(QueryActivity.this);
+                    if (readUtil == null) {
+                        readUtil = new ReadUtil().setReadListener(QueryActivity.this);
+                        readUtil.initUfh(QueryActivity.this);
+                    }
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
@@ -101,20 +103,20 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         garbagePkgText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_F12 ) {
-                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_F12 &&  event.getAction() == KeyEvent.ACTION_UP) {
                         Toast.makeText(QueryActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
-                        readUtil = null;
+
                         if (barcodeManager == null) {
+                            readUtil = null;
                             barcodeManager = BarcodeManager.getInstance();
+                            barcodeManager.Barcode_Open(QueryActivity.this, dataReceived);
                         }
-                        barcodeManager.Barcode_Open(QueryActivity.this, dataReceived);
+
                         try {
                             Thread.sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
                     barHandler.sendEmptyMessage(Handler_Scan);
                     return true;
                 } else {
@@ -129,6 +131,11 @@ public class QueryActivity extends BaseActivity implements View.OnClickListener,
         super.onPause();
         if (isFinishing() && Ufh3Data.isDeviceOpen()) {
             Ufh3Data.UhfGetData.CloseUhf();
+        }
+
+        if (null != barcodeManager) {
+            barcodeManager.Barcode_Close();
+            barcodeManager.Barcode_Stop();
         }
     }
 

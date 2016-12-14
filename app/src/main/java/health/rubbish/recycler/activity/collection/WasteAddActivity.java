@@ -57,9 +57,9 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
 
 
     private int type = 0;
-
-    private static String catogeryname = "";
-    private static String catogerycode ="";
+    public static String garbageCanCode = "";
+    public static String catogeryname = "";
+    public static String catogerycode ="";
 
     @Override
     protected int getLayoutId() {
@@ -88,13 +88,13 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         Button saveBtn = (Button) findViewById(R.id.save_print_btn);
         rfidBtn.setOnClickListener(this);
         areaText.setOnClickListener(this);
-        nurseText.setOnClickListener(this);
+        //nurseText.setOnClickListener(this);
         room_text_arrow.setOnClickListener(this);
         //  typeText.setOnClickListener(this);
        // scanImage.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
 
-        initDevice();
+        //initDevice();
         //设置默认值
         formCodeText.setText(Utils.getUserId()+"-" + DateUtil.getTimeString().replaceAll("-","").replaceAll(":","").replaceAll(" ","-"));
         collectorText.setText(Utils.getUserName());
@@ -105,7 +105,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
             trashItem.categorycode = catogerycode;
             typeText.setText(catogeryname);
         }
-
+        garbageCanCodeText.setText(garbageCanCode);
         setF12Listener();
 
     }
@@ -115,6 +115,11 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         super.onPause();
         if (isFinishing() && Ufh3Data.isDeviceOpen()) {
             Ufh3Data.UhfGetData.CloseUhf();
+        }
+
+        if (null != barcodeManager) {
+            barcodeManager.Barcode_Close();
+            barcodeManager.Barcode_Stop();
         }
     }
 
@@ -308,8 +313,11 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                         barcodeManager.Barcode_Stop();
                         barcodeManager=null;
                     }
-                    readUtil = new ReadUtil().setReadListener(WasteAddActivity.this);
-                    readUtil.initUfh(WasteAddActivity.this);
+                    if (readUtil == null) {
+                        readUtil = new ReadUtil().setReadListener(WasteAddActivity.this);
+                        readUtil.initUfh(WasteAddActivity.this);
+                    }
+
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
@@ -326,22 +334,22 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         roomText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                type =1;
-                if (keyCode == KeyEvent.KEYCODE_F12 ) {
-                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+
+                if (keyCode == KeyEvent.KEYCODE_F12 && event.getAction() == KeyEvent.ACTION_UP) {
+                        type =1;
                         Toast.makeText(WasteAddActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
-                        readUtil = null;
                         if (barcodeManager == null) {
+                            readUtil = null;
                             barcodeManager = BarcodeManager.getInstance();
+                            barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
                         }
-                        barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
                         try {
                             Thread.sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
-                    barHandler.sendEmptyMessage(Handler_Scan);
+                        barHandler.sendEmptyMessage(Handler_Scan);
+
                     return true;
                 } else {
                     return false;
@@ -352,21 +360,20 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
         typeText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                type =2;
-                if (keyCode == KeyEvent.KEYCODE_F12 ) {
-                    if ( event.getAction() == KeyEvent.ACTION_DOWN) {
+
+                if (keyCode == KeyEvent.KEYCODE_F12 && event.getAction() == KeyEvent.ACTION_DOWN ) {
+                        type =2;
                         Toast.makeText(WasteAddActivity.this, "正在扫描二维码，请稍后", Toast.LENGTH_LONG).show();
-                        readUtil = null;
                         if (barcodeManager == null) {
+                            readUtil = null;
                             barcodeManager = BarcodeManager.getInstance();
+                            barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
                         }
-                        barcodeManager.Barcode_Open(WasteAddActivity.this, dataReceived);
                         try {
                             Thread.sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
                     barHandler.sendEmptyMessage(Handler_Scan);
                     return true;
                 } else {
@@ -380,6 +387,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onDataReceived(String data) {
+        garbageCanCode = data;
         garbageCanCodeText.setText(data);
     }
 
@@ -408,7 +416,7 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
     private String codeId;
     private final int Handler_Scan = 2200;
     private BeepManager beepManager;
-    private BarcodeManager barcodeManager;
+    private BarcodeManager barcodeManager =null;
     private final int Handler_SHOW_RESULT = 1999;
     private byte[] codeBuffer;
 
@@ -427,15 +435,15 @@ public class WasteAddActivity extends BaseActivity implements View.OnClickListen
                                 areaText.setText(DepartmentDao.getInstance().getdepartarea(array[0]));
                                 roomText.setText(DepartmentDao.getInstance().getdepartname(array[1]));
                                 nurseText.setText(DepartmentDao.getInstance().getnurse(array[2]));
-
+                               // roomText.setText(str);
                             }
-                            //roomText.setText(str);
                         }
                         else if (type ==2) {
                             catogerycode = str;
                             catogeryname = CatogeryDao.getInstance().getcategoryname(str);
                             trashItem.categorycode = catogerycode;
                             typeText.setText(catogeryname);
+                            //typeText.setText(str);
                         }
                         beepManager.play();
                         barcodeManager.Barcode_Stop();

@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             @Override
             public void onFailure(Call call, IOException e) {
                 hideDialog();
-                new AlertDialog.Builder(MainActivity.this).setMessage(R.string.netnotavaliable).setPositiveButton("确定", null).show();
+                toast("无法连接到网络");
             }
 
             @Override
@@ -171,8 +171,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
                     item.trashid = object.optString("id");
                     item.trashcode = object.optString("trashcode");
-                    //item.status = object.optString("status");
-                    item.status = Constant.Status.DOWNLOAD;
+                    item.status = object.optString("status");
+                    //item.status = Constant.Status.DOWNLOAD;
                     item.trashcancode = object.optString("trashcancode");
                     item.colletime = object.optString("colletime");
                     item.categorycode = object.optString("categorycode");

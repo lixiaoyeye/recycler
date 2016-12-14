@@ -55,7 +55,6 @@ public class PrintHomeActivity extends BaseActivity {
 
 	private final static int REQUEST_BT_ENABLE = 0;
 	private final static int REQUEST_BT_ADDR = 1;
-
 	private boolean mBtOpenSilent = true;
 	private BluetoothAdapter btAdapter = null;
 	private JQPrinter printer = new JQPrinter(PRINTER_MODEL.JLP351);
