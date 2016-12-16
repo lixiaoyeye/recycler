@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,11 +33,14 @@ import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
 import health.rubbish.recycler.datebase.TrashDao;
+import health.rubbish.recycler.entity.MyPrinterInfo;
+import health.rubbish.recycler.entity.PrintStatItem;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.network.entity.WasteUploadResp;
 import health.rubbish.recycler.network.request.ParseCallback;
 import health.rubbish.recycler.network.request.RequestUtil;
 import health.rubbish.recycler.util.DateUtil;
+import health.rubbish.recycler.util.PrinterManager;
 import health.rubbish.recycler.util.ToastUtil;
 import health.rubbish.recycler.widget.HeaderLayout;
 import health.rubbish.recycler.widget.jqprinter.printer.JQPrinter;
@@ -76,6 +81,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
     private String trashcode;
     private boolean search = false;
     Calendar calendar;
+    List<TrashItem> clone= new ArrayList<>();
 
     public static void launchListActivity(Context context, String departcode, String nurseid, String categorycode, String trashcancode, String trashcode) {
         Intent intent = new Intent(context, WasteListActivity.class);
@@ -137,10 +143,21 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cloneRows();
                 uploadWaste();
             }
         });
         uploadBtn.setVisibility(search?View.GONE:View.VISIBLE);
+    }
+
+    private void cloneRows()
+    {
+        clone.clear();
+        List<TrashItem> items = adapter.getNeedUploadTrash();
+        for (TrashItem item :items)
+        {
+            clone.add(item);
+        }
     }
 
     private void initData() {
@@ -276,6 +293,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
                 hideDialog();
                 ToastUtil.shortToast(WasteListActivity.this, "上传成功");
                 //刷新本地数据
+                printClick();
                 loadData();
             }
         }.execute();
@@ -295,6 +313,45 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         });
         builder.setNegativeButton("取消", null);
         return true;
+    }
+
+    private List<PrintStatItem> getPrintStat()
+    {
+        List<PrintStatItem> result = new ArrayList<>();
+        for(TrashItem trashItem:clone)
+        {
+            int postion = getPintStatPostion(result,trashItem);
+            if (postion ==-1)
+            {
+                PrintStatItem item = new PrintStatItem();
+                item.categoryname = trashItem.categoryname;
+                item.departname = trashItem.departname;
+                if (!TextUtils.isEmpty(trashItem.weight)) {
+                    item.weight = Double.parseDouble(trashItem.weight);
+                }
+                result.add(item);
+            }
+            else
+            {
+                if (!TextUtils.isEmpty(trashItem.weight)) {
+                    result.get(postion).weight =result.get(postion).weight+ Double.parseDouble(trashItem.weight);
+                }
+            }
+        }
+        return result;
+    }
+
+    private int getPintStatPostion(List<PrintStatItem> items,TrashItem trashItem)
+    {
+        for (int i=0;i<items.size();i++)
+        {
+            PrintStatItem item = items.get(i);
+            if (item.departname.equals(trashItem.departname) && item.categoryname.equals(trashItem.categoryname))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
 
@@ -354,6 +411,21 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         System.exit(0); //凡是非零都表示异常退出!0表示正常退出!
     }
 
+    private void  printClick()
+    {
+        if (btAdapter == null)
+            return;
+        printerInfo = new PrinterManager().getPrinter();
+        if (printerInfo!=null)
+        {
+            prePrint(printerInfo);
+        }
+        else {
+            Intent myIntent = new Intent(WasteListActivity.this, BtConfigActivity.class);
+            startActivityForResult(myIntent, REQUEST_BT_ADDR);
+        }
+    }
+
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         @Override
@@ -370,6 +442,7 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
             }
         };
     };
+    private MyPrinterInfo printerInfo = null;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -392,72 +465,63 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         {
             if(resultCode == Activity.RESULT_OK)
             {
-                String btDeviceString = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_ADDRESS);
-                if (btDeviceString != null)
-                {
-                    if(btAdapter.isDiscovering())
-                        btAdapter.cancelDiscovery();
-
-                    if (printer != null)
-                    {
-                        printer.close();
-                    }
-
-                    if (!printer.open(btDeviceString))
-                    {
-                        Toast.makeText(this, "打印机Open失败", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    if (!printer.wakeUp())
-                        return;
-
-                    mApplication.printer = printer;
-                    Log.e("JQ", "printer open ok");
-
-                    IntentFilter filter = new IntentFilter();
-                    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);//蓝牙断开
-                    registerReceiver(mReceiver, filter);
-
-                    ButtonExpress_click();
-                }
+                printerInfo = new MyPrinterInfo();
+                printerInfo.address = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_ADDRESS);
+                printerInfo.name = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_NAME);
+                prePrint(printerInfo);
             }
         }
     }
 
-    public void ButtonExpress_click()
+    private void prePrint(MyPrinterInfo myPrinterInfo)
     {
-        // Cancel discovery because it will slow down the connection
-        if(btAdapter.isDiscovering())
-            btAdapter.cancelDiscovery();
-
-        if (!printer.waitBluetoothOn(5000))
+        if (myPrinterInfo.address != null)
         {
-            return;
+            if(btAdapter.isDiscovering())
+                btAdapter.cancelDiscovery();
+
+            if (printer != null)
+            {
+                printer.close();
+            }
+
+            if (!printer.open(myPrinterInfo.address))
+            {
+                Toast.makeText(this, "打印机Open失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!printer.wakeUp())
+                return;
+
+            new PrinterManager().setPrinter(myPrinterInfo);
+
+            mApplication.printer = printer;
+            Log.e("JQ", "printer open ok");
+
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);//蓝牙断开
+            registerReceiver(mReceiver, filter);
+
+            if(btAdapter.isDiscovering())
+                btAdapter.cancelDiscovery();
+
+            print();
         }
-        if (!printer.isOpen)
-        {
-            return;
-        }
-        print();
     }
-
-
-    public void  buttonSetupSerialPort_click()
-    {
-        startActivity(new Intent(WasteListActivity.this, SerialPortPreferences.class));
-    }
-
 
     int startIndex;//开始打印的序号
     int amount;//打印的总数
     boolean rePrint = false;//是否需要重新打印
     public void print()
     {
+        if (!printer.waitBluetoothOn(5000))
+        {
+            return;
+        }
 
         if (!printer.isOpen)
         {
-            this.finish();
             return;
         }
         if (!rePrint)
@@ -470,6 +534,8 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
             //软件无法判断当前打印的内容是否打印完好，所以需要重新打印当前张。你可以增加一个按钮来决定是打当前张还是打下一张。
             rePrint = false;
         }
+
+
         if (getPrinterState()) {
             if(printExpress())
             {
@@ -520,65 +586,34 @@ public class WasteListActivity extends BaseActivity  implements View.OnClickList
         }
         JPL jpl = printer.jpl;
 
-
-        int y = 10, x,x1, x2, x3,x4,x5;
-        x = 20;
-        x1 = 100;
-        x2 = 20;
-        x3 = 140;
-        x4 = 280;
-        x5 = 380;
+        int y = 10;
+        int t1 = 100, t2 = 340, t3 = 500;
+        int x1 = 20, x2 = 290, x3 = 470;
+        int z1 = 20, z2= 140,z3 = 300;
 
         int height = 30;
 
         if (!jpl.page.start(0, 0, 676, 504, Page.PAGE_ROTATE.x0))
             return false;
 
-        y = 10;
-
-    /*    if (!jpl.barcode.QRCode(x4+90, y+80, 0, Barcode.QRCODE_ECC.LEVEL_M, Barcode.BAR_UNIT.x7, JPL.ROTATE.x0, trashItem.trashcode))
-            return false;
-        y = y+5;
-
-		if (!jpl.text.drawOut(x, y+180, "no:", 18, true, false, false, false, TEXT_ENLARGE.x1, TEXT_ENLARGE.x1, ROTATE.x0))
-            return false;
-        jpl.text.drawOut(116, y+180, "nostr11111111111111", 16, false, false, false, false, TEXT_ENLARGE.x1, TEXT_ENLARGE.x1, ROTATE.x0);*/
-
-      /*  jpl.text.drawOut(x2, y, "垃圾袋号:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.trashcode, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+        jpl.text.drawOut(t1, y, "科　室:", 19, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+        jpl.text.drawOut(t2, y, "类　型", 19, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+        jpl.text.drawOut(t3, y, "重量(kg)", 19, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
         y += height;
 
-        jpl.text.drawOut(x2, y, "垃圾桶号:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.trashcancode, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
+        List<PrintStatItem> printStatItems =  getPrintStat();
+        for (PrintStatItem item :printStatItems)
+        {
+            jpl.text.drawOut(x1, y, item.departname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+            jpl.text.drawOut(x2, y, item.categoryname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+            jpl.text.drawOut(x3, y, String.valueOf(item.weight), 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+            y += height;
+        }
 
-        jpl.text.drawOut(x2, y, "院　　区:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.departarea, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
-
-        jpl.text.drawOut(x2, y, "科　　室:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.departname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
-
-        jpl.text.drawOut(x2, y, "护　　士:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.nurse, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
-
-        jpl.text.drawOut(x2, y, "类　　型:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.categoryname, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
-
-        jpl.text.drawOut(x2, y, "重　　量:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.weight + "  kg", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height;
-
-        jpl.text.drawOut(x2, y, "日　　期:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        jpl.text.drawOut(x3, y, trashItem.date, 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-        y += height+25;
-        jpl.text.drawOut(x2, y, "签　　字:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
-*/
-        /*if (!jpl.graphic.line(x3, y, 575, y, 1))
-            return false;*/
+        y += height+30;
+        jpl.text.drawOut(z1, y, "日　期:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+        jpl.text.drawOut(z2, y, DateUtil.getDateString(), 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
+        jpl.text.drawOut(z3, y, "签　字:", 18, true, false, false, false, Text.TEXT_ENLARGE.x1, Text.TEXT_ENLARGE.x1, JPL.ROTATE.x0);
 
         jpl.page.end();
         jpl.page.print();

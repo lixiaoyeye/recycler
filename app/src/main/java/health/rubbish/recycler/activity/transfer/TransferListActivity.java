@@ -238,11 +238,10 @@ public class TransferListActivity extends BaseActivity  implements View.OnClickL
                 updateStartAndEndTime(0);
 
                         toast("成功");
-
             }
             else
             {
-                toast("获取数据失败");
+                toast("上传失败");
             }
         }
         catch (Exception e)

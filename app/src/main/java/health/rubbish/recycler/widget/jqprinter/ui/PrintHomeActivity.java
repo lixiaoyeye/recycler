@@ -12,9 +12,11 @@ import health.rubbish.recycler.activity.entruck.EntruckerAddActivity;
 import health.rubbish.recycler.base.App;
 import health.rubbish.recycler.base.BaseActivity;
 import health.rubbish.recycler.constant.Constant;
+import health.rubbish.recycler.entity.MyPrinterInfo;
 import health.rubbish.recycler.entity.TrashItem;
 import health.rubbish.recycler.util.DateUtil;
 import health.rubbish.recycler.util.FileUtil;
+import health.rubbish.recycler.util.PrinterManager;
 import health.rubbish.recycler.util.QRCodeUtil;
 import health.rubbish.recycler.widget.HeaderLayout;
 import health.rubbish.recycler.widget.jqprinter.port.SerialPort;
@@ -38,6 +40,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.print.PrinterInfo;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -76,6 +79,8 @@ public class PrintHomeActivity extends BaseActivity {
 
 	private long mLastTime = 0;
 	private TrashItem trashItem;
+
+	private MyPrinterInfo printerInfo = null;
 
 	@Override
 	protected int getLayoutId() {
@@ -280,36 +285,10 @@ public class PrintHomeActivity extends BaseActivity {
 		{
 			if(resultCode == Activity.RESULT_OK)
 			{
-				String btDeviceString = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_ADDRESS);
-				if (btDeviceString != null)
-				{
-					mButtonBtScan.setText("名称:"+data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_NAME) + "\r\n地址:" + btDeviceString);
-					if(btAdapter.isDiscovering())
-						btAdapter.cancelDiscovery();
-
-					if (printer != null)
-					{
-						printer.close();
-					}
-
-					if (!printer.open(btDeviceString))
-					{
-						Toast.makeText(this, "打印机Open失败", Toast.LENGTH_SHORT).show();
-						return;
-					}
-
-					if (!printer.wakeUp())
-						return;
-
-					mApplication.printer = printer;
-					Log.e("JQ", "printer open ok");
-
-					IntentFilter filter = new IntentFilter();
-					filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);//蓝牙断开
-					registerReceiver(mReceiver, filter);
-
-					ButtonExpress_click();
-				}
+				printerInfo = new MyPrinterInfo();
+				printerInfo.address = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_ADDRESS);
+				printerInfo.name = data.getStringExtra(BtConfigActivity.EXTRA_BLUETOOTH_DEVICE_NAME);
+				prePrint(printerInfo);
 			}
 			else
 			{
@@ -323,30 +302,16 @@ public class PrintHomeActivity extends BaseActivity {
 	{
 		if (btAdapter == null)
 			return;
-		mButtonBtScan.setText("请等待");
-		Intent myIntent = new Intent(PrintHomeActivity.this, BtConfigActivity.class);
-		startActivityForResult(myIntent, REQUEST_BT_ADDR);
-	}
-
-
-	public void ButtonExpress_click()
-	{
-		// Cancel discovery because it will slow down the connection
-		if(btAdapter.isDiscovering())
-			btAdapter.cancelDiscovery();
-
-		if (!printer.waitBluetoothOn(5000))
+		printerInfo = new PrinterManager().getPrinter();
+		if (printerInfo!=null)
 		{
-			mButtonBtScan.setText("打印");
-			return;
+			prePrint(printerInfo);
 		}
-		if (!printer.isOpen)
-		{
-			mButtonBtScan.setText("打印");
-			return;
+		else {
+			mButtonBtScan.setText("请等待");
+			Intent myIntent = new Intent(PrintHomeActivity.this, BtConfigActivity.class);
+			startActivityForResult(myIntent, REQUEST_BT_ADDR);
 		}
-
-		print();
 	}
 
 
@@ -355,12 +320,55 @@ public class PrintHomeActivity extends BaseActivity {
 		startActivity(new Intent(PrintHomeActivity.this, SerialPortPreferences.class));
 	}
 
+	private void prePrint(MyPrinterInfo myPrinterInfo)
+	{
+		if (myPrinterInfo.address != null)
+		{
+			mButtonBtScan.setText("名称:"+myPrinterInfo.name + "\r\n地址:" + myPrinterInfo.address);
+			if(btAdapter.isDiscovering())
+				btAdapter.cancelDiscovery();
+
+			if (printer != null)
+			{
+				printer.close();
+			}
+
+			if (!printer.open(myPrinterInfo.address))
+			{
+				Toast.makeText(this, "打印机Open失败", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			if (!printer.wakeUp())
+				return;
+
+			new PrinterManager().setPrinter(myPrinterInfo);
+
+			mApplication.printer = printer;
+			Log.e("JQ", "printer open ok");
+
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);//蓝牙断开
+			registerReceiver(mReceiver, filter);
+
+			if(btAdapter.isDiscovering())
+				btAdapter.cancelDiscovery();
+
+			print();
+		}
+	}
 
 	int startIndex;//开始打印的序号
 	int amount;//打印的总数
 	boolean rePrint = false;//是否需要重新打印
 	public void print()
 	{
+
+		if (!printer.waitBluetoothOn(5000))
+		{
+			mButtonBtScan.setText("打印");
+			return;
+		}
 
 		if (!printer.isOpen)
 		{

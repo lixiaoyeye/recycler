@@ -171,8 +171,8 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
                     item.trashid = object.optString("id");
                     item.trashcode = object.optString("trashcode");
-                    item.status = object.optString("status");
-                    //item.status = Constant.Status.DOWNLOAD;
+                    //item.status = object.optString("status");
+                    item.status = Constant.Status.DOWNLOAD;
                     item.trashcancode = object.optString("trashcancode");
                     item.colletime = object.optString("colletime");
                     item.categorycode = object.optString("categorycode");
